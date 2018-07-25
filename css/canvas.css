@@ -1,4 +1,12 @@
 canvas{
   border: 1px solid black;
   /* background-color: green; */
+  width: 800px;
+  height: 500px;
+  min-width: 600px;
+  min-height: 300px;
+}
+
+.canavs-background{
+  background-image: (images/Mount_Fuji_from_mount_tanjo.jpg);
 }

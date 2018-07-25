@@ -2,8 +2,13 @@ let canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+let img = new Image();
+img.src = './../images/Mount_Fuji_from_mount_tanjo.jpg';
+
+
 // c means context
 let c = canvas.getContext('2d');
+c.drawImage(img, 69,50);
 
 // for (let i = 0; i < 1000; i++) {
 //   const color = (`rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255})`);

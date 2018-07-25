@@ -4,6 +4,20 @@
   height: 100%;
 }
 
-.canvas-placement{
-  
+.webpage-canvas-placement{
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.webpage-title{
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.webpage-description{
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }

@@ -6,7 +6,6 @@ class Game{
     this._height = height;
     this._ctx = canvas.getContext('2d');
     this.__clear = this._clear.bind(this);
-    // this.drawBall = this.drawBall.bind(this);
   }
 
 
@@ -39,7 +38,7 @@ class Game{
     );
     this._ctx.fillStyle = 'rgba(146,98,57,1)';
     this._ctx.fillRect(0, 400, 1000, 100);
-
+    setInterval(ball.draw.bind(ball),10);
     // let xPos = Math.random() * innerWidth;
     // let yPos = Math.random() * innerHeight;
     // let dx = (Math.random() - 0.5) * 10;
@@ -84,16 +83,45 @@ class Game{
 
 
 
+
+class Ball {
+  constructor(canvas, width, height){
+    this._ctx = canvas.getContext('2d');
+    this._width = width;
+    this._height = height;
+    this.x = Math.random() * width;
+    this.y = 200;
+    this.dx = 1;
+    this.dy = -1;
+    this.ballRadius = 10;
+    this.makeBall = this.makeBall.bind(this);
+  }
+
+
+  makeBall() {
+      this._ctx.beginPath();
+      this._ctx.arc(this.x, this.y, this.ballRadius, 0, Math.PI*2);
+      this._ctx.fillStyle = "#0095DD";
+      this._ctx.fill();
+      this._ctx.closePath();
+  }
+
+  draw() {
+      this.makeBall();
+      if(this.x + this.dx > this._width-this.ballRadius || this.x + this.dx < this.ballRadius) {
+      this.dx = -this.dx;
+      }
+      if(this.y + this.dy > this._height-this.ballRadius || this.y + this.dy < this.ballRadius) {
+          this.dy = -this.dy;
+      }
+      this.x += this.dx;
+      this.y += this.dy;
+  }
+}
+
+
 const game = new Game(document.getElementsByTagName('canvas')[0],800,500);
+const ball = new Ball(document.getElementsByTagName('canvas')[0],800,500);
 // game._background();
 game.play();
 // setInterval(game.draw, 10);
-
-// class Ball extends Game{
-//   constructor(props){
-//     super(props);
-//     this._ctx = props._ctx;
-//     this._width = props._width;
-//     this._height = props._height;
-//   }
-// }

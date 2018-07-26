@@ -8,27 +8,6 @@ class Game{
     this.__clear = this._clear.bind(this);
   }
 
-
-  //   this._ctx.clearRect(0, 0, innerWidth, innerHeight);
-  //   this._ctx.beginPath();
-  //   this._ctx.arc(xPos, yPos, radius, 0, Math.PI * 2, false);
-  //   this._ctx.strokeStyle = 'blue';
-  //   this._ctx.stroke();
-  //
-  //   if (xPos + radius > innerWidth || xPos - radius < 0) {
-  //     dx = -dx;
-  //   }
-  //
-  //   if (yPos + radius > innerHeight || yPos - radius < 0) {
-  //     dy = -dy;
-  //   }
-  //   xPos += dx;
-  //   yPos += dy;
-  // };
-
-
-
-
   play(){
     this._clear;
     let img = new Image();
@@ -38,37 +17,11 @@ class Game{
     );
     this._ctx.fillStyle = 'rgba(146,98,57,1)';
     this._ctx.fillRect(0, 400, 1000, 100);
-    setInterval(ball.draw.bind(ball),10);
-    // let xPos = Math.random() * innerWidth;
-    // let yPos = Math.random() * innerHeight;
-    // let dx = (Math.random() - 0.5) * 10;
-    // let dy = (Math.random() - 0.5) * 15;
-    // const radius = 30;
-    //
-    // this._ctx.beginPath();
-    // this._ctx.arc(xPos, yPos, radius, 0, Math.PI * 2, false);
-    // this._ctx.strokeStyle = 'blue';
-    // this._ctx.stroke();
-    //
-    // if (xPos + radius > innerWidth || xPos - radius < 0) {
-    //   dx = -dx;
-    // }
-    //
-    // if (yPos + radius > innerHeight || yPos - radius < 0) {
-    //   dy = -dy;
-    // }
-    // xPos += dx;
-    // yPos += dy;
+    setInterval(enemy.draw.bind(enemy),10);
+    setInterval(spirit.draw.bind(spirit),10);
+    setInterval(dog.draw.bind(dog),10);
     requestAnimationFrame(this.play.bind(this));
   }
-
-  // _background(){
-  //   let img = new Image();
-  //   img.src = "images/Mount_Fuji_from_mount_tanjo.jpg";
-  //   img.onload = () => (
-  //     this._ctx.drawImage(img, 0, 0, 800, 500)
-  //   );
-  // }
 
   _clear(){
     this._ctx.clearRect(0, 0, this._width, this._height);
@@ -84,15 +37,48 @@ class Game{
 
 
 
-class Ball {
+class Enemy {
   constructor(canvas, width, height){
     this._ctx = canvas.getContext('2d');
     this._width = width;
     this._height = height;
-    this.x = Math.random() * width;
-    this.y = 200;
-    this.dx = 1;
-    this.dy = -1;
+    this.x = 789;
+    this.y = 375;
+    this.dx = .05;
+    this.ballRadius = 10;
+    this.makeBall = this.makeBall.bind(this);
+  }
+
+
+  makeBall() {
+      this._ctx.beginPath();
+      this._ctx.arc(this.x, this.y, this.ballRadius, 0, Math.PI*2);
+      this._ctx.fillStyle = "Black";
+      this._ctx.fill();
+      this._ctx.closePath();
+  }
+
+  draw() {
+      this.makeBall();
+      if(this.x + this.dx > this._width-this.ballRadius ) {
+      this.dx = -this.dx;
+      }
+
+      if(this.x - this.dx < 0){
+        this.x = 789;
+      }
+      this.x += this.dx;
+
+  }
+}
+class Spirit {
+  constructor(canvas, width, height){
+    this._ctx = canvas.getContext('2d');
+    this._width = width;
+    this._height = height;
+    this.x = 789;
+    this.y = 325;
+    this.dx = .05;
     this.ballRadius = 10;
     this.makeBall = this.makeBall.bind(this);
   }
@@ -108,20 +94,69 @@ class Ball {
 
   draw() {
       this.makeBall();
-      if(this.x + this.dx > this._width-this.ballRadius || this.x + this.dx < this.ballRadius) {
+      if(this.x + this.dx > this._width-this.ballRadius ) {
       this.dx = -this.dx;
       }
-      if(this.y + this.dy > this._height-this.ballRadius || this.y + this.dy < this.ballRadius) {
-          this.dy = -this.dy;
+      if(this.x - this.dx < 0){
+        this.x = 789;
       }
       this.x += this.dx;
-      this.y += this.dy;
+
+  }
+}
+
+
+class Dog{
+  constructor(canvas, width, height){
+    this._ctx = canvas.getContext('2d');
+    this._width = width;
+    this._height = height;
+    this.xPos = 75;
+    this.yPos = 355;
+    this.ballRadius = 10;
+    this.jump = false;
+    this.drawDog = this.drawDog.bind(this);
+    this.dog = this._ctx.fillRect(this.xPos, this.yPos, 45, 45);
+    this.KeyDownHandler = this.KeyDownHandler.bind(this);
+    this.KeyUpHandler = this.KeyUpHandler.bind(this);
+  }
+
+  KeyUpHandler(e){
+    if(e.keyCode === 32 || e.keyCode === 38){
+      this.jump = false;
+    }
+  }
+
+  KeyDownHandler(e){
+    if(e.keyCode === 32 || e.keyCode === 38){
+      this.jump = true;
+    }
+  }
+
+  dogPosition(){
+
+  }
+
+  drawDog(){
+    this._ctx.fillStyle = 'rgba(255,192,203,1)';
+    this.dog;
+  }
+
+  draw(){
+    this.drawDog();
+    document.addEventListener('keydown', this.KeyDownHandler, false);
+    document.addEventListener('keyup', this.KeyUpHandler, false);
+    if(this.jump){
+      this.dog = this._ctx.fillRect(75, 300, 45, 45);
+    }else{
+      this.dog = this._ctx.fillRect(75, 355, 45, 45);
+    }
   }
 }
 
 
 const game = new Game(document.getElementsByTagName('canvas')[0],800,500);
-const ball = new Ball(document.getElementsByTagName('canvas')[0],800,500);
-// game._background();
+const enemy = new Enemy(document.getElementsByTagName('canvas')[0],800,500);
+const spirit = new Spirit(document.getElementsByTagName('canvas')[0],800,500);
+const dog = new Dog(document.getElementsByTagName('canvas')[0],800,500);
 game.play();
-// setInterval(game.draw, 10);

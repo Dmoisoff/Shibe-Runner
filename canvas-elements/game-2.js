@@ -9,7 +9,7 @@ function draw(){
   img.onload = () => (
     this._ctx.drawImage(img, 0, 0, 800, 400)
   );
-  
+
 }
 
 function handleKeys(){

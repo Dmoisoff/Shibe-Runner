@@ -6,6 +6,8 @@ class Game{
     this._height = height;
     this._ctx = canvas.getContext('2d');
     this.__clear = this._clear.bind(this);
+    this._floor = this._floor.bind(this);
+    this._reset = this._reset.bind(this);
   }
 
   play(){
@@ -15,12 +17,18 @@ class Game{
     img.onload = () => (
       this._ctx.drawImage(img, 0, 0, 800, 400)
     );
-    this._ctx.fillStyle = 'rgba(146,98,57,1)';
-    this._ctx.fillRect(0, 400, 1000, 100);
-    setInterval(enemy.draw.bind(enemy),10);
-    setInterval(spirit.draw.bind(spirit),10);
-    setInterval(dog.draw.bind(dog),10);
-    requestAnimationFrame(this.play.bind(this));
+    this._floor();
+    if((enemy.enemyPos()[0] > 75 && enemy.enemyPos()[0] < 120) && dog.dogPosition()[1] === 355){
+      window.alert('game over');
+      document.location.reload();
+    }else{
+      setInterval(enemy.draw.bind(enemy),10);
+      // setInterval(spirit.draw.bind(spirit),10);
+      setInterval(dog.draw.bind(dog),10);
+      setInterval(enemy2.draw.bind(enemy2),6);
+      dog.dogPosition();
+      requestAnimationFrame(this.play.bind(this));
+    }
   }
 
   _clear(){
@@ -31,6 +39,15 @@ class Game{
     this._ctx.beginPath();
     this._ctx.rect(0, 0, this._width, this._height);
     this._ctx.stroke();
+  }
+
+  _floor(){
+    this._ctx.fillStyle = 'rgba(146,98,57,1)';
+    this._ctx.fillRect(0, 400, 1000, 100);
+  }
+
+  _reset(){
+    enemy.enemyReset();
   }
 }
 
@@ -58,17 +75,24 @@ class Enemy {
       this._ctx.closePath();
   }
 
+  enemyReset(){
+    this.x = 789;
+    this.y = 375;
+  }
+
+  enemyPos(){
+    return [this.x, this.y];
+  }
+
   draw() {
       this.makeBall();
       if(this.x + this.dx > this._width-this.ballRadius ) {
       this.dx = -this.dx;
       }
-
       if(this.x - this.dx < 0){
         this.x = 789;
       }
       this.x += this.dx;
-
   }
 }
 class Spirit {
@@ -134,7 +158,7 @@ class Dog{
   }
 
   dogPosition(){
-
+    return [this.xPos, this.yPos];
   }
 
   drawDog(){
@@ -147,16 +171,25 @@ class Dog{
     document.addEventListener('keydown', this.KeyDownHandler, false);
     document.addEventListener('keyup', this.KeyUpHandler, false);
     if(this.jump){
-      this.dog = this._ctx.fillRect(75, 300, 45, 45);
+      this.yPos = 300;
+      for (this.yPos; this.yPos < 355; this.yPos++) {
+
+        this.dog = this._ctx.fillRect(this.xPos, this.yPos, 45, 45);
+      }
     }else{
-      this.dog = this._ctx.fillRect(75, 355, 45, 45);
+      this.yPos = 355;
+      this.dog = this._ctx.fillRect(this.xPos, this.yPos, 45, 45);
     }
   }
 }
 
 
+
+
 const game = new Game(document.getElementsByTagName('canvas')[0],800,500);
 const enemy = new Enemy(document.getElementsByTagName('canvas')[0],800,500);
+const enemy2 = new Enemy(document.getElementsByTagName('canvas')[0],800,500);
 const spirit = new Spirit(document.getElementsByTagName('canvas')[0],800,500);
+const grid = new Grid(document.getElementsByTagName('canvas')[0],800,500);
 const dog = new Dog(document.getElementsByTagName('canvas')[0],800,500);
 game.play();

@@ -55,44 +55,30 @@ class Game{
 
 
 class Enemy {
-  constructor(canvas, width, height){
+  constructor(canvas, width, height, image){
     this._ctx = canvas.getContext('2d');
     this._width = width;
     this._height = height;
-    this.x = 810;
-    this.y = 375;
+    this.x = 780;
+    this.y = 335;
     this.dx = .09;
     this.ballRadius = 10;
-    this.makeBall = this.makeBall.bind(this);
+    this.image = image;
   }
-
-
-  makeBall() {
-      this._ctx.beginPath();
-      this._ctx.arc(this.x, this.y, this.ballRadius, 0, Math.PI*2);
-      this._ctx.fillStyle = "Black";
-      this._ctx.fill();
-      this._ctx.closePath();
-  }
-
-  // enemyReset(){
-  //   this.x = 789;
-  //   this.y = 375;
-  // }
 
   enemyPos(){
     return [this.x, this.y];
   }
 
   draw() {
-      this.makeBall();
-      if(this.x + this.dx > this._width-this.ballRadius+40 ) {
-      this.dx = -this.dx;
-      }
-      if(this.x - this.dx < 0){
-        this.x = 810;
-      }
-      this.x += this.dx;
+        this._ctx.drawImage(this.image , this.x, this.y, 95,65);
+        if(this.x >= 0-95){
+          this.x -= .09;
+        }
+        if(this.x <= 0-95){
+          this.x = 810;
+        }
+
   }
 }
 
@@ -106,15 +92,6 @@ class Spirit {
     this.dx = .05;
     this.ballRadius = 10;
     this.makeBall = this.makeBall.bind(this);
-  }
-
-
-  makeBall() {
-      this._ctx.beginPath();
-      this._ctx.arc(this.x, this.y, this.ballRadius, 0, Math.PI*2);
-      this._ctx.fillStyle = "#0095DD";
-      this._ctx.fill();
-      this._ctx.closePath();
   }
 
   draw() {
@@ -196,29 +173,6 @@ class Dog{
   }
 }
 
-// class Grid{
-//   constructor(canvas, width, height){
-//     canvas.width = width;
-//     canvas.height = height;
-//     this._width = width;
-//     this._height = height;
-//     this._ctx = canvas.getContext('2d');
-//   }
-//
-// draw(){
-//   for (let x=0; x<=this._width; x+=20) {
-//     for (let y=0; y <=this._height; y+=20) {
-//       this._ctx.moveTo(x, 0);
-//       this._ctx.lineTo(x, this._height);
-//       this._ctx.stroke();
-//       this._ctx.moveTo(0, y);
-//       this._ctx.lineTo(this._width, y);
-//       this._ctx.stroke();
-//     }
-//   }
-// }
-// }
-
 
 function drawDog(){
   let img = new Image();
@@ -236,6 +190,5 @@ const game = new Game(document.getElementsByTagName('canvas')[0],800,500);
 const enemy = new Enemy(document.getElementsByTagName('canvas')[0],800,500,drawEnemy());
 const enemy2 = new Enemy(document.getElementsByTagName('canvas')[0],800,500);
 const spirit = new Spirit(document.getElementsByTagName('canvas')[0],800,500);
-const grid = new Grid(document.getElementsByTagName('canvas')[0],800,500);
 const dog = new Dog(document.getElementsByTagName('canvas')[0],800,500,drawDog());
 game.play();

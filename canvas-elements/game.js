@@ -18,7 +18,7 @@ class Game{
       this._ctx.drawImage(img, 0, 0, 800, 400)
     );
     this._floor();
-    if((enemy.enemyPos()[0] > 75 && enemy.enemyPos()[0] < 120) && dog.dogPosition()[1] >= 355){
+    if((enemy.enemyPos()[0] > 75 && enemy.enemyPos()[0] < 120) && dog.dogPosition()[1] >= 345){
       window.alert('game over');
       document.location.reload();
     }else{
@@ -137,7 +137,7 @@ class Dog{
     this._width = width;
     this._height = height;
     this.xPos = 75;
-    this.yPos = 355;
+    this.yPos = 345;
     this.ballRadius = 10;
     this.jump = false;
     // this.drawDog = this.drawDog.bind(this);
@@ -178,7 +178,7 @@ class Dog{
 
 
   draw(){
-    this._ctx.drawImage(this.pexelDog , this.xPos, this.yPos)
+    this._ctx.drawImage(this.pexelDog , this.xPos, this.yPos, 65, 65);
     document.addEventListener('keydown', this.KeyDownHandler, false);
     document.addEventListener('keyup', this.KeyUpHandler, false);
     if(this.jump && this.yPos > 250 ){
@@ -186,57 +186,50 @@ class Dog{
       if(this.yPos === 250)
       this.jump = false;
     }
-    if(!this.jump && this.yPos <= 355 ){
+    if(!this.jump && this.yPos <= 345 ){
       this.yPos += 0.5;
     }
     // else{
-    //   this.yPos = 355;
+    //   this.yPos = 345;
     //   this.dog = this._ctx.fillRect(this.xPos, this.yPos, 45, 45);
     // }
   }
 }
 
-class Grid{
-  constructor(canvas, width, height){
-    canvas.width = width;
-    canvas.height = height;
-    this._width = width;
-    this._height = height;
-    this._ctx = canvas.getContext('2d');
-  }
-
-draw(){
-  for (let x=0; x<=this._width; x+=20) {
-    for (let y=0; y <=this._height; y+=20) {
-      this._ctx.moveTo(x, 0);
-      this._ctx.lineTo(x, this._height);
-      this._ctx.stroke();
-      this._ctx.moveTo(0, y);
-      this._ctx.lineTo(this._width, y);
-      this._ctx.stroke();
-    }
-  }
-}
-
-}
+// class Grid{
+//   constructor(canvas, width, height){
+//     canvas.width = width;
+//     canvas.height = height;
+//     this._width = width;
+//     this._height = height;
+//     this._ctx = canvas.getContext('2d');
+//   }
+//
+// draw(){
+//   for (let x=0; x<=this._width; x+=20) {
+//     for (let y=0; y <=this._height; y+=20) {
+//       this._ctx.moveTo(x, 0);
+//       this._ctx.lineTo(x, this._height);
+//       this._ctx.stroke();
+//       this._ctx.moveTo(0, y);
+//       this._ctx.lineTo(this._width, y);
+//       this._ctx.stroke();
+//     }
+//   }
+// }
+// }
 
 
 function drawDog(){
   let img = new Image();
   img.src = "images/shibe_1.png";
   return img;
-  // img.onload = () => (
-  //   this._ctx.drawImage(img, this.xPos, this.yPos,500,300)
-  // );
 }
 
 function drawEnemy(){
   let img = new Image();
   img.src = "images/Hexen-Spirit.png";
   return img;
-  // img.onload = () => (
-  //   this._ctx.drawImage(img, this.xPos, this.yPos,500,300)
-  // );
 }
 
 const game = new Game(document.getElementsByTagName('canvas')[0],800,500);

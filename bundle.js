@@ -106,7 +106,6 @@ var Dog = function () {
 
     this.xPos = 75;
     this.yPos = 335;
-    this.jump = false;
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.KeyUpHandler = this.KeyUpHandler.bind(this);
     this.arcUp = this.arcUp.bind(this);
@@ -116,6 +115,7 @@ var Dog = function () {
     this.subIndex = 0;
     document.addEventListener('keydown', this.KeyDownHandler, false);
     document.addEventListener('keyup', this.KeyUpHandler, false);
+    this.jump = false;
     this.inAir = false;
   }
 
@@ -173,9 +173,9 @@ var Dog = function () {
       _ctx.drawImage(this.pexelDog, this.index * 36.6, 264, 37.6, 23.4, this.xPos, this.yPos, 85, 65);
       if (this.jump && this.yPos > 235) {
         this.yPos -= this.arcUp(this.yPos);
-        if (Math.floor(this.yPos) === 235) {
-          this.jump = false;
+        if (Math.floor(this.yPos) <= 235) {
           this.inAir = true;
+          this.jump = false;
         }
       }
       if (this.inAir) {

@@ -101,15 +101,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Dog = function () {
-  function Dog(canvas, width, height, image) {
+  function Dog(image) {
     _classCallCheck(this, Dog);
 
-    this._ctx = canvas.getContext('2d');
-    this._width = width;
-    this._height = height;
     this.xPos = 75;
     this.yPos = 335;
-    this.ballRadius = 10;
     this.jump = false;
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.KeyUpHandler = this.KeyUpHandler.bind(this);
@@ -218,26 +214,23 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Enemy = function () {
-  function Enemy(canvas, width, height, image) {
+  function Enemy(image, speed, height) {
     _classCallCheck(this, Enemy);
 
-    this._ctx = canvas.getContext('2d');
-    this._width = width;
-    this._height = height;
     this.x = 780;
-    this.y = 335;
+    this.y = height;
     this.dx = .09;
     this.image = image;
-    this.speed = 4;
+    this.speed = speed;
   }
 
   _createClass(Enemy, [{
-    key: 'enemyPos',
+    key: "enemyPos",
     value: function enemyPos() {
       return [this.x, this.y];
     }
   }, {
-    key: 'draw',
+    key: "draw",
     value: function draw(_ctx) {
       // debugger
       // _ctx.clearRect(0,0,800,500);
@@ -246,9 +239,9 @@ var Enemy = function () {
       if (this.x >= 0 - 95) {
         this.x -= this.speed;
       }
-      if (this.x <= 0 - 95) {
-        this.x = 810;
-      }
+      // if(this.x <= 0-95){
+      //   this.x = 810;
+      // }
     }
   }]);
 
@@ -279,70 +272,93 @@ var Spirit = __webpack_require__(/*! ./spirit */ "./canvas-elements/spirit.js");
 var Score = __webpack_require__(/*! ./score */ "./canvas-elements/score.js");
 
 var Game = function () {
-  function Game(canvas, width, height, image) {
+  function Game(canvas, width, height, mountFuji, dogImage, enemyImage) {
     _classCallCheck(this, Game);
 
-    // debugger
+    this.dog = new Dog(dogImage);
+    this.enemyImage = enemyImage;
     canvas.width = width;
     canvas.height = height;
     this._width = width;
     this._height = height;
-    this.image = image;
+    this.image = mountFuji;
     this._ctx = canvas.getContext('2d');
     this._floor = this._floor.bind(this);
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
+    this.enemyGenerator = this.enemyGenerator.bind(this);
+    this.play = this.play.bind(this);
     this.subIndex = 0;
-    this.backgroundImage = this.attachBackground();
     this.currentScore = 1;
     this.playGame = false;
+    this.enemySpeed = 4;
+    this.enemyGenerationRate = 1;
+    this.enemyheight = 335;
   }
 
   _createClass(Game, [{
+    key: 'enemyGenerator',
+    value: function enemyGenerator(enemySpeed, height) {
+      var enemy = new Enemy(this.enemyImage, enemySpeed, height);
+      return enemy;
+    }
+  }, {
     key: 'play',
-    value: function play(enemy, dog) {
+    value: function play(enemy) {
       var _this = this;
 
-      // debugger
       if (!this.playGame && this.currentScore === 1) {
         this._floor();
-        this.generateBackground(this.backgroundImage);
+        this.generateBackground(this.image);
         this.startGame();
         requestAnimationFrame(function () {
-          _this.play(enemy, dog);
+          _this.play;
         });
       } else if (!this.playGame) {
         this.restartGame();
         requestAnimationFrame(function () {
-          _this.play(enemy, dog);
+          _this.play;
         });
       } else {
         this.currentScore += 1;
         this._ctx.clearRect(0, 0, 800, 500);
         this._floor();
-        this.generateBackground(this.backgroundImage);
-        if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] >= 335) {
-          this.restartGame();
-          requestAnimationFrame(function () {
-            _this.play(enemy, dog);
-          });
-          // window.alert(`gameover your score was ${this.currentScore}`);
-          // document.location.reload();
+        this.generateBackground(this.image);
+        if (enemy) {
+          if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && this.dog.dogPosition()[1] >= 335) {
+            // debugger
+            this.restartGame();
+            requestAnimationFrame(function () {
+              _this.play();
+            });
+            // window.alert(`gameover your score was ${this.currentScore}`);
+            // document.location.reload();
+          } else {
+            enemy.draw(this._ctx);
+            enemy = this.removeEnemy(enemy);
+            this.dog.draw(this._ctx);
+            this.drawScore(this._ctx);
+            requestAnimationFrame(function () {
+              _this.play(enemy);
+            });
+          }
         } else {
-          enemy.draw(this._ctx);
-          dog.draw(this._ctx);
+          if (this.currentScore % 500 > 200) {
+            this.enemySpeed += 1;
+          }
+          if (this.currentScore % 600 > 400 || this.currentScore % 700 > 200) {
+            // debugger
+            this.enemyheight = 335;
+          } else {
+            this.enemyheight = 335;
+          }
+          enemy = this.enemyGenerator(this.enemySpeed, this.enemyheight);
+          this.dog.draw(this._ctx);
           this.drawScore(this._ctx);
           requestAnimationFrame(function () {
-            _this.play(enemy, dog);
+            _this.play(enemy);
           });
         }
       }
-    }
-  }, {
-    key: 'attachBackground',
-    value: function attachBackground() {
-      var img = new Image();
-      img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
-      return img;
     }
   }, {
     key: 'generateBackground',
@@ -383,21 +399,21 @@ var Game = function () {
     key: 'startGame',
     value: function startGame() {
       document.addEventListener('keydown', this.KeyDownHandler, false);
-      this._ctx.fillStyle = 'rgba(128,128,128,.8)';
+      this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(150, 75, 500, 300);
       this._ctx.font = "32px Arial";
       this._ctx.fillStyle = "rgba(255,183,197,1)";
-      this._ctx.fillText('Press Enter or Spacebar', 225, 115);
+      this._ctx.fillText('Press Enter', 320, 115);
       this._ctx.fillText('to start the game.', 280, 155);
     }
   }, {
     key: 'restartGame',
     value: function restartGame() {
-      this._ctx.fillStyle = 'rgba(128,128,128,.8)';
+      this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(150, 75, 500, 300);
       this._ctx.font = "32px Arial";
       this._ctx.fillStyle = "rgba(255,183,197,1)";
-      this._ctx.fillText('Press Enter or Spacebar', 225, 115);
+      this._ctx.fillText('Press Enter', 320, 115);
       this._ctx.fillText('to restart the game.', 280, 155);
       this._ctx.fillText('Your score was', 280, 205);
       this._ctx.fillText('' + this.currentScore, 360, 245);
@@ -406,17 +422,60 @@ var Game = function () {
   }, {
     key: 'KeyDownHandler',
     value: function KeyDownHandler(e) {
-      debugger;
       if (!this.playGame) {
-        if (e.keyCode === 32 || e.keyCode === 13) {
+        if (e.keyCode === 13) {
           this.playGame = true;
+          this.currentScore = 1;
+          this.enemySpeed = 4;
+          this.play();
         }
+      }
+    }
+  }, {
+    key: 'removeEnemy',
+    value: function removeEnemy(enemy) {
+      if (enemy.enemyPos()[0] < -95) {
+        return null;
+      } else {
+        return enemy;
       }
     }
   }]);
 
   return Game;
 }();
+
+var pic1 = "images/PC Computer - Planet Centauri - Shiba_full.png";
+var pic2 = "images/Hexen-Spirit.png";
+var pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
+
+function createImages(pic1, pic2, pic3) {
+  var dogImage = new Image();
+  dogImage.src = pic1;
+  dogImage.onload = function () {
+    var enemyImage = new Image();
+    enemyImage.src = pic2;
+    enemyImage.onload = function () {
+      var mountFuji = new Image();
+      mountFuji.src = pic3;
+      mountFuji.onload = function () {
+        debugger;
+        // const enemy = new Enemy(document.getElementById('canvas'),800,500,enemyImage);
+        // const dog = new Dog(document.getElementById('canvas'),800,500,dogImage);
+        var game = new Game(document.getElementById('canvas'), 800, 500, mountFuji, dogImage, enemyImage);
+        game.play();
+      };
+    };
+  };
+}
+
+createImages(pic1, pic2, pic3);
+
+// attachBackground(){
+//   let img = new Image();
+//   img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
+//   return img;
+// }
 
 // function drawDog(){
 //   let img = new Image();
@@ -428,32 +487,6 @@ var Game = function () {
 //   img.src = "images/shibe.png";
 //   return img;
 // }
-
-var pic1 = "images/PC Computer - Planet Centauri - Shiba_full.png";
-var pic2 = "images/Hexen-Spirit.png";
-var pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
-
-function createImages(pic1, pic2, pic3) {
-  var img = new Image();
-  img.src = pic1;
-  img.onload = function () {
-    var img2 = new Image();
-    img2.src = pic2;
-    img2.onload = function () {
-      var img3 = new Image();
-      img3.src = pic3;
-      img3.onload = function () {
-        debugger;
-        var game = new Game(document.getElementById('canvas'), 800, 500, img);
-        var enemy = new Enemy(document.getElementById('canvas'), 800, 500, img2);
-        var dog = new Dog(document.getElementById('canvas'), 800, 500, img);
-        game.play(enemy, dog);
-      };
-    };
-  };
-}
-
-createImages(pic1, pic2, pic3);
 
 // function drawDogs(){
 //   let img = new Image();

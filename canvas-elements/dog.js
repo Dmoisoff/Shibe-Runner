@@ -1,12 +1,8 @@
 
 class Dog{
-  constructor(canvas, width, height, image){
-    this._ctx = canvas.getContext('2d');
-    this._width = width;
-    this._height = height;
+  constructor(image){
     this.xPos = 75;
     this.yPos = 335;
-    this.ballRadius = 10;
     this.jump = false;
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.KeyUpHandler = this.KeyUpHandler.bind(this);

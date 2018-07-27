@@ -1,14 +1,11 @@
 
 class Enemy {
-  constructor(canvas, width, height, image){
-    this._ctx = canvas.getContext('2d');
-    this._width = width;
-    this._height = height;
+  constructor(image, speed, height){
     this.x = 780;
-    this.y = 335;
+    this.y = height;
     this.dx = .09;
     this.image = image;
-    this.speed = 4;
+    this.speed = speed;
   }
 
   enemyPos(){
@@ -23,9 +20,9 @@ class Enemy {
         if(this.x >= 0-95){
           this.x -= this.speed;
         }
-        if(this.x <= 0-95){
-          this.x = 810;
-        }
+        // if(this.x <= 0-95){
+        //   this.x = 810;
+        // }
 
   }
 }

@@ -122,13 +122,14 @@ class Dog{
     this.index = 0;
     this.subIndex = 0;
     document.addEventListener('keydown', this.KeyDownHandler, false);
-    // document.addEventListener('keyup', this.KeyUpHandler, false);
+    document.addEventListener('keyup', this.KeyUpHandler, false);
     this.inAir = false;
   }
 
   KeyUpHandler(e){
     if(e.keyCode === 32 || e.keyCode === 38){
       this.jump = false;
+      this.inAir = true;
     }
   }
 

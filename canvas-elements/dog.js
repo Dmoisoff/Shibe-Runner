@@ -43,28 +43,31 @@ class Dog{
 
   arcUp(value){
     if(value < 255){
-      return(0.05);
-    }else if(value < 300){
-      return(0.3);
+      return(3);
+    // }else if(value < 300){
+    //   return(3);
     }else{
-      return(0.5);
+      return(5);
     }
   }
 
   arcDown(value){
     if(value < 300){
-      return(0.05);
-    }else if(value < 325){
-      return(0.3);
+      return(3);
+    // }else if(value < 325){
+    //   return(3);
     }else{
-      return(0.5);
+      return(5);
     }
   }
 
 
-  draw(){
-    // this._ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
-    this._ctx.drawImage(this.pexelDog, this.index*36.6, 264,  37.6,23.4, this.xPos, this.yPos, 85, 65);
+  draw(_ctx){
+    // debugger
+    // _ctx.clearRect(0,0,800,500);
+    // debugger
+    // _ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
+    _ctx.drawImage(this.pexelDog, this.index*36.6, 264,  37.6,23.4, this.xPos, this.yPos, 85, 65);
     if(this.jump && this.yPos > 235 ){
       this.yPos -= this.arcUp(this.yPos);
       if(Math.floor(this.yPos) === 235){
@@ -79,7 +82,7 @@ class Dog{
       }
     }
     this.subIndex += 1;
-    if( this.subIndex === 600 ){
+    if( this.subIndex === 10 ){
       this.index = (this.index + 1) % 5;
       this.subIndex = 0;
     }

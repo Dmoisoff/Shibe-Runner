@@ -7,18 +7,21 @@ class Enemy {
     this.x = 780;
     this.y = 335;
     this.dx = .09;
-    this.ballRadius = 10;
     this.image = image;
+    this.speed = 4;
   }
 
   enemyPos(){
     return [this.x, this.y];
   }
 
-  draw() {
-        this._ctx.drawImage(this.image , this.x, this.y, 95,65);
+  draw(_ctx) {
+    // debugger
+    // _ctx.clearRect(0,0,800,500);
+    // debugger
+        _ctx.drawImage(this.image , this.x, this.y, 95,65);
         if(this.x >= 0-95){
-          this.x -= .09;
+          this.x -= this.speed;
         }
         if(this.x <= 0-95){
           this.x = 810;

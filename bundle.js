@@ -86,53 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./canvas-elements/Spirit.js":
-/*!***********************************!*\
-  !*** ./canvas-elements/Spirit.js ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Spirit = function () {
-  function Spirit(canvas, width, height) {
-    _classCallCheck(this, Spirit);
-
-    this._ctx = canvas.getContext('2d');
-    this._width = width;
-    this._height = height;
-    this.x = 789;
-    this.y = 325;
-    this.dx = .05;
-  }
-
-  _createClass(Spirit, [{
-    key: 'draw',
-    value: function draw() {
-      this.makeBall();
-      if (this.x + this.dx > this._width - this.ballRadius) {
-        this.dx = -this.dx;
-      }
-      if (this.x - this.dx < 0) {
-        this.x = 789;
-      }
-      this.x += this.dx;
-    }
-  }]);
-
-  return Spirit;
-}();
-
-module.exports = Spirit;
-
-/***/ }),
-
 /***/ "./canvas-elements/dog.js":
 /*!********************************!*\
   !*** ./canvas-elements/dog.js ***!
@@ -196,29 +149,32 @@ var Dog = function () {
     key: 'arcUp',
     value: function arcUp(value) {
       if (value < 255) {
-        return 0.05;
-      } else if (value < 300) {
-        return 0.3;
+        return 3;
+        // }else if(value < 300){
+        //   return(3);
       } else {
-        return 0.5;
+        return 5;
       }
     }
   }, {
     key: 'arcDown',
     value: function arcDown(value) {
       if (value < 300) {
-        return 0.05;
-      } else if (value < 325) {
-        return 0.3;
+        return 3;
+        // }else if(value < 325){
+        //   return(3);
       } else {
-        return 0.5;
+        return 5;
       }
     }
   }, {
     key: 'draw',
-    value: function draw() {
-      // this._ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
-      this._ctx.drawImage(this.pexelDog, this.index * 36.6, 264, 37.6, 23.4, this.xPos, this.yPos, 85, 65);
+    value: function draw(_ctx) {
+      // debugger
+      // _ctx.clearRect(0,0,800,500);
+      // debugger
+      // _ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
+      _ctx.drawImage(this.pexelDog, this.index * 36.6, 264, 37.6, 23.4, this.xPos, this.yPos, 85, 65);
       if (this.jump && this.yPos > 235) {
         this.yPos -= this.arcUp(this.yPos);
         if (Math.floor(this.yPos) === 235) {
@@ -233,7 +189,7 @@ var Dog = function () {
         }
       }
       this.subIndex += 1;
-      if (this.subIndex === 600) {
+      if (this.subIndex === 10) {
         this.index = (this.index + 1) % 5;
         this.subIndex = 0;
       }
@@ -271,8 +227,8 @@ var Enemy = function () {
     this.x = 780;
     this.y = 335;
     this.dx = .09;
-    this.ballRadius = 10;
     this.image = image;
+    this.speed = 4;
   }
 
   _createClass(Enemy, [{
@@ -282,10 +238,13 @@ var Enemy = function () {
     }
   }, {
     key: 'draw',
-    value: function draw() {
-      this._ctx.drawImage(this.image, this.x, this.y, 95, 65);
+    value: function draw(_ctx) {
+      // debugger
+      // _ctx.clearRect(0,0,800,500);
+      // debugger
+      _ctx.drawImage(this.image, this.x, this.y, 95, 65);
       if (this.x >= 0 - 95) {
-        this.x -= .09;
+        this.x -= this.speed;
       }
       if (this.x <= 0 - 95) {
         this.x = 810;
@@ -316,53 +275,82 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Dog = __webpack_require__(/*! ./dog */ "./canvas-elements/dog.js");
 var Enemy = __webpack_require__(/*! ./enemy */ "./canvas-elements/enemy.js");
-var Spirit = __webpack_require__(/*! ./Spirit */ "./canvas-elements/Spirit.js");
+var Spirit = __webpack_require__(/*! ./spirit */ "./canvas-elements/spirit.js");
+var Score = __webpack_require__(/*! ./score */ "./canvas-elements/score.js");
 
 var Game = function () {
   function Game(canvas, width, height, image) {
     _classCallCheck(this, Game);
 
+    // debugger
     canvas.width = width;
     canvas.height = height;
     this._width = width;
     this._height = height;
     this.image = image;
     this._ctx = canvas.getContext('2d');
-    this.__clear = this._clear.bind(this);
     this._floor = this._floor.bind(this);
-    this._reset = this._reset.bind(this);
     this.subIndex = 0;
+    this.backgroundImage = this.attachBackground();
+    this.currentScore = 1;
+    this.playGame = false;
   }
 
   _createClass(Game, [{
     key: 'play',
-    value: function play() {
+    value: function play(enemy, dog) {
       var _this = this;
 
-      this._clear;
-      var img = new Image();
-      img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
-      img.onload = function () {
-        return _this._ctx.drawImage(img, 0, 0, 800, 400);
-      };
-      this._floor();
-      if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] >= 335) {
-        window.alert('game over');
-        document.location.reload();
+      debugger;
+      if (!this.playGame) {
+        this._floor();
+        this.generateBackground(this.backgroundImage);
       } else {
-        setInterval(enemy.draw.bind(enemy), 10);
-        // setInterval(spirit.draw.bind(spirit),10);
-        setInterval(dog.draw.bind(dog), 10);
-        // setInterval(trees.draw.bind(trees),10);
-        // setInterval(enemy2.draw.bind(enemy2),1);
-        dog.dogPosition();
-        requestAnimationFrame(this.play.bind(this));
+        this.currentScore += 1;
+        this._ctx.clearRect(0, 0, 800, 500);
+        this._floor();
+        this.generateBackground(this.backgroundImage);
+        if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] >= 335) {
+          window.alert('gameover your score was ' + this.currentScore);
+          document.location.reload();
+        } else {
+          enemy.draw(this._ctx);
+          dog.draw(this._ctx);
+          this.drawScore(this._ctx);
+          requestAnimationFrame(function () {
+            _this.play(enemy, dog);
+          });
+        }
       }
     }
   }, {
-    key: '_clear',
-    value: function _clear() {
-      this._ctx.clearRect(0, 0, this._width, this._height);
+    key: 'attachBackground',
+    value: function attachBackground() {
+      var img = new Image();
+      img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
+      return img;
+    }
+  }, {
+    key: 'generateBackground',
+    value: function generateBackground(img) {
+      var _this2 = this;
+
+      if (!img.src) {
+        var _img = new Image();
+        _img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
+        return _img.onload = function () {
+          return _this2._ctx.drawImage(_img, 0, 0, 800, 400);
+        };
+      } else {
+        return this._ctx.drawImage(img, 0, 0, 800, 400);
+      }
+    }
+  }, {
+    key: 'drawScore',
+    value: function drawScore(_ctx) {
+      _ctx.font = "16px Arial";
+      _ctx.fillStyle = "#0095DD";
+      _ctx.fillText('Score: ' + this.currentScore, 8, 20);
     }
   }, {
     key: '_drawBorder',
@@ -377,216 +365,162 @@ var Game = function () {
       this._ctx.fillStyle = 'rgba(146,98,57,1)';
       this._ctx.fillRect(0, 400, 1000, 100);
     }
-  }, {
-    key: '_reset',
-    value: function _reset() {
-      enemy.enemyReset();
-    }
   }]);
 
   return Game;
 }();
 
-//
-// class Enemy {
-//   constructor(canvas, width, height, image){
-//     this._ctx = canvas.getContext('2d');
-//     this._width = width;
-//     this._height = height;
-//     this.x = 780;
-//     this.y = 335;
-//     this.dx = .09;
-//     this.ballRadius = 10;
-//     this.image = image;
-//   }
-//
-//   enemyPos(){
-//     return [this.x, this.y];
-//   }
-//
-//   draw() {
-//         this._ctx.drawImage(this.image , this.x, this.y, 95,65);
-//         if(this.x >= 0-95){
-//           this.x -= .09;
-//         }
-//         if(this.x <= 0-95){
-//           this.x = 810;
-//         }
-//
-//   }
+// function drawDog(){
+//   let img = new Image();
+//   img.src = "images/shibe_1.png";
+//   return img;
+// }
+// function drawDog1(){
+//   let img = new Image();
+//   img.src = "images/shibe.png";
+//   return img;
 // }
 
-// class Spirit {
-//   constructor(canvas, width, height){
-//     this._ctx = canvas.getContext('2d');
-//     this._width = width;
-//     this._height = height;
-//     this.x = 789;
-//     this.y = 325;
-//     this.dx = .05;
-//   }
-//
-//   draw() {
-//       this.makeBall();
-//       if(this.x + this.dx > this._width-this.ballRadius ) {
-//       this.dx = -this.dx;
-//       }
-//       if(this.x - this.dx < 0){
-//         this.x = 789;
-//       }
-//       this.x += this.dx;
-//   }
-// }
+var pic1 = "images/PC Computer - Planet Centauri - Shiba_full.png";
+var pic2 = "images/Hexen-Spirit.png";
+var pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
 
-//
-// class Dog{
-//   constructor(canvas, width, height, image){
-//     this._ctx = canvas.getContext('2d');
-//     this._width = width;
-//     this._height = height;
-//     this.xPos = 75;
-//     this.yPos = 335;
-//     this.ballRadius = 10;
-//     this.jump = false;
-//     this.KeyDownHandler = this.KeyDownHandler.bind(this);
-//     this.KeyUpHandler = this.KeyUpHandler.bind(this);
-//     this.arcUp = this.arcUp.bind(this);
-//     this.arcDown = this.arcDown.bind(this);
-//     this.pexelDog = image;
-//     this.index = 0;
-//     this.subIndex = 0;
-//     document.addEventListener('keydown', this.KeyDownHandler, false);
-//     document.addEventListener('keyup', this.KeyUpHandler, false);
-//     this.inAir = false;
-//   }
-//
-//   KeyUpHandler(e){
-//     if(e.keyCode === 32 || e.keyCode === 38){
-//       this.jump = false;
-//       this.inAir = true;
-//     }
-//   }
-//
-//   KeyDownHandler(e){
-//     if (!this.jump && !this.inAir) {
-//       if(e.keyCode === 32 || e.keyCode === 38){
-//         this.jump = true;
-//     }
-//     }
-//   }
-//
-//   dogPosition(){
-//     return [this.xPos, this.yPos];
-//   }
-//
-//
-//
-//   arcUp(value){
-//     if(value < 255){
-//       return(0.05);
-//     }else if(value < 300){
-//       return(0.3);
-//     }else{
-//       return(0.5);
-//     }
-//   }
-//
-//   arcDown(value){
-//     if(value < 300){
-//       return(0.05);
-//     }else if(value < 325){
-//       return(0.3);
-//     }else{
-//       return(0.5);
-//     }
-//   }
-//
-//
-//   draw(){
-//     // this._ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
-//     this._ctx.drawImage(this.pexelDog, this.index*36.6, 264,  37.6,23.4, this.xPos, this.yPos, 85, 65);
-//     if(this.jump && this.yPos > 235 ){
-//       this.yPos -= this.arcUp(this.yPos);
-//       if(Math.floor(this.yPos) === 235){
-//         this.jump = false;
-//         this.inAir = true;
-//       }
-//     }
-//     if(this.inAir){
-//       this.yPos += this.arcDown(this.yPos);
-//       if(this.yPos >= 335){
-//         this.inAir = false;
-//       }
-//     }
-//     this.subIndex += 1;
-//     if( this.subIndex === 600 ){
-//       this.index = (this.index + 1) % 5;
-//       this.subIndex = 0;
-//     }
-//   }
+function createImages(pic1, pic2, pic3) {
+  var img = new Image();
+  img.src = pic1;
+  img.onload = function () {
+    var img2 = new Image();
+    img2.src = pic2;
+    img2.onload = function () {
+      var img3 = new Image();
+      img3.src = pic3;
+      img3.onload = function () {
+        debugger;
+        var game = new Game(document.getElementById('canvas'), 800, 500, img);
+        var enemy = new Enemy(document.getElementById('canvas'), 800, 500, img2);
+        var dog = new Dog(document.getElementById('canvas'), 800, 500, img);
+        game.play(enemy, dog);
+      };
+    };
+  };
+}
+
+createImages(pic1, pic2, pic3);
+
+// function drawDogs(){
+//   let img = new Image();
+//   img.src = "images/PC Computer - Planet Centauri - Shiba_full.png";
+//   return img;
 // }
 //
+// function drawEnemy(){
+//   let img = new Image();
+//   img.src = "images/Hexen-Spirit.png";
+//   return img;
+// }
+//
+// function drawBackground(){
+//   let img = new Image();
+//   img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
+//   return img;
+// }
+//
+//
+//
+// const game = new Game(document.getElementById('canvas'),800,500, drawBackground());
+// const enemy = new Enemy(document.getElementById('canvas'),800,500,drawEnemy());
+// // const enemy2 = new Enemy(document.getElementById('canvas'),800,500);
+// // const spirit = new Spirit(document.getElementById('canvas'),800,500);
+// const dog = new Dog(document.getElementById('canvas'),800,500,drawDogs());
+// // const trees = new Trees(document.getElementById('canvas'),drawTrees());
+// game.play();
+
+/***/ }),
+
+/***/ "./canvas-elements/score.js":
+/*!**********************************!*\
+  !*** ./canvas-elements/score.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
-function drawDog() {
-  var img = new Image();
-  img.src = "images/shibe_1.png";
-  return img;
-}
-function drawDog1() {
-  var img = new Image();
-  img.src = "images/shibe.png";
-  return img;
-}
-function drawDogs() {
-  var img = new Image();
-  img.src = "images/PC Computer - Planet Centauri - Shiba_full.png";
-  return img;
-}
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function drawEnemy() {
-  var img = new Image();
-  img.src = "images/Hexen-Spirit.png";
-  return img;
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function drawBackground() {
-  var img = new Image();
-  img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
-  return img;
-}
+var Score = function () {
+  function Score(startScore) {
+    _classCallCheck(this, Score);
 
-function drawTrees() {
-  var img = new Image();
-  img.src = "images/kisspng-sprite-desktop-wallpaper-fruit-tree-fir-tree-5ace4a93d182a1.6415131015234689478582.png";
-  return img;
-}
-
-var Trees = function () {
-  function Trees(canvas, image) {
-    _classCallCheck(this, Trees);
-
-    this._ctx = canvas.getContext('2d');
-    this.trees = image;
+    this.currentScore = startScore;
   }
 
-  _createClass(Trees, [{
-    key: 'draw',
-    value: function draw() {
-      this._ctx.drawImage(this.trees, 0, 747, 275, 350, 0, 185, 450, 340);
+  _createClass(Score, [{
+    key: "drawScore",
+    value: function drawScore(_ctx, currentScore) {
+      _ctx.font = "16px Arial";
+      _ctx.fillStyle = "#0095DD";
+      _ctx.fillText("Score: " + currentScore, 8, 20);
+    }
+  }, {
+    key: "score",
+    value: function score() {
+      this.currentScore;
     }
   }]);
 
-  return Trees;
+  return Score;
 }();
 
-var game = new Game(document.getElementsByTagName('canvas')[0], 800, 500, drawBackground());
-var enemy = new Enemy(document.getElementsByTagName('canvas')[0], 800, 500, drawEnemy());
-var enemy2 = new Enemy(document.getElementsByTagName('canvas')[0], 800, 500);
-var spirit = new Spirit(document.getElementsByTagName('canvas')[0], 800, 500);
-var dog = new Dog(document.getElementsByTagName('canvas')[0], 800, 500, drawDogs());
-var trees = new Trees(document.getElementsByTagName('canvas')[0], drawTrees());
-game.play();
+/***/ }),
+
+/***/ "./canvas-elements/spirit.js":
+/*!***********************************!*\
+  !*** ./canvas-elements/spirit.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Spirit = function () {
+  function Spirit(canvas, width, height) {
+    _classCallCheck(this, Spirit);
+
+    this._ctx = canvas.getContext('2d');
+    this._width = width;
+    this._height = height;
+    this.x = 789;
+    this.y = 325;
+    this.dx = .05;
+  }
+
+  _createClass(Spirit, [{
+    key: 'draw',
+    value: function draw() {
+      this.makeBall();
+      if (this.x + this.dx > this._width - this.ballRadius) {
+        this.dx = -this.dx;
+      }
+      if (this.x - this.dx < 0) {
+        this.x = 789;
+      }
+      this.x += this.dx;
+    }
+  }]);
+
+  return Spirit;
+}();
+
+module.exports = Spirit;
 
 /***/ })
 

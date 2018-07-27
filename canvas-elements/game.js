@@ -13,25 +13,33 @@ class Game{
     this.image = image;
     this._ctx = canvas.getContext('2d');
     this._floor = this._floor.bind(this);
+    this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.subIndex = 0;
     this.backgroundImage = this.attachBackground();
     this.currentScore = 1;
-    this.playGame = false
+    this.playGame = false;
   }
 
   play(enemy, dog){
-    debugger
-    if(!this.playGame){
+    // debugger
+    if(!this.playGame && this.currentScore === 1){
       this._floor();
       this.generateBackground(this.backgroundImage);
-    }else{
+      this.startGame();
+      requestAnimationFrame(() => {this.play(enemy, dog);});
+    }else if (!this.playGame) {
+      this.restartGame();
+      requestAnimationFrame(() => {this.play(enemy, dog);});
+      }else{
       this.currentScore += 1;
       this._ctx.clearRect(0,0,800,500);
       this._floor();
       this.generateBackground(this.backgroundImage);
       if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && dog.dogPosition()[1] >= 335){
-        window.alert(`gameover your score was ${this.currentScore}`);
-        document.location.reload();
+        this.restartGame();
+        requestAnimationFrame(() => {this.play(enemy, dog);});
+        // window.alert(`gameover your score was ${this.currentScore}`);
+        // document.location.reload();
       }else{
         enemy.draw(this._ctx);
         dog.draw(this._ctx);
@@ -77,6 +85,36 @@ class Game{
     this._ctx.fillRect(0, 400, 1000, 100);
   }
 
+  startGame(){
+    document.addEventListener('keydown', this.KeyDownHandler, false);
+    this._ctx.fillStyle = 'rgba(128,128,128,.8)';
+    this._ctx.fillRect(150, 75, 500, 300);
+    this._ctx.font = "32px Arial";
+    this._ctx.fillStyle = "rgba(255,183,197,1)";
+    this._ctx.fillText(`Press Enter or Spacebar`, 225, 115);
+    this._ctx.fillText(`to start the game.`, 280, 155);
+  }
+
+  restartGame(){
+    this._ctx.fillStyle = 'rgba(128,128,128,.8)';
+    this._ctx.fillRect(150, 75, 500, 300);
+    this._ctx.font = "32px Arial";
+    this._ctx.fillStyle = "rgba(255,183,197,1)";
+    this._ctx.fillText(`Press Enter or Spacebar`, 225, 115);
+    this._ctx.fillText(`to restart the game.`, 280, 155);
+    this._ctx.fillText(`Your score was`, 280, 205);
+    this._ctx.fillText(`${this.currentScore}`, 360, 245);
+    this.playGame = false;
+  }
+
+  KeyDownHandler(e){
+    debugger
+    if (!this.playGame) {
+      if(e.keyCode === 32 || e.keyCode === 13){
+        this.playGame = true;
+    }
+    }
+  }
 }
 
 

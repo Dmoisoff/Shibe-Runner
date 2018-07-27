@@ -1,9 +1,10 @@
 class Game{
-  constructor(canvas, width, height){
+  constructor(canvas, width, height, image){
     canvas.width = width;
     canvas.height = height;
     this._width = width;
     this._height = height;
+    this.image = image;
     this._ctx = canvas.getContext('2d');
     this.__clear = this._clear.bind(this);
     this._floor = this._floor.bind(this);
@@ -117,7 +118,8 @@ class Dog{
     this.jump = false;
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.KeyUpHandler = this.KeyUpHandler.bind(this);
-    this.arc = this.arc.bind(this);
+    this.arcUp = this.arcUp.bind(this);
+    this.arcDown = this.arcDown.bind(this);
     this.pexelDog = image;
     this.index = 0;
     this.subIndex = 0;
@@ -134,7 +136,7 @@ class Dog{
   }
 
   KeyDownHandler(e){
-    if (!this.jump) {
+    if (!this.jump && !this.inAir) {
       if(e.keyCode === 32 || e.keyCode === 38){
         this.jump = true;
     }
@@ -147,10 +149,21 @@ class Dog{
 
 
 
-  arc(value){
-
+  arcUp(value){
     if(value < 255){
-      return(0.1);
+      return(0.05);
+    }else if(value < 300){
+      return(0.3);
+    }else{
+      return(0.5);
+    }
+  }
+
+  arcDown(value){
+    if(value < 300){
+      return(0.05);
+    }else if(value < 325){
+      return(0.3);
     }else{
       return(0.5);
     }
@@ -160,9 +173,8 @@ class Dog{
   draw(){
     // this._ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
     this._ctx.drawImage(this.pexelDog, this.index*36.6, 264,  37.6,23.4, this.xPos, this.yPos, 85, 65);
-    // 235
     if(this.jump && this.yPos > 235 ){
-      this.yPos -= this.arc(this.yPos);
+      this.yPos -= this.arcUp(this.yPos);
       if(Math.floor(this.yPos) === 235){
         this.jump = false;
         this.inAir = true;
@@ -170,13 +182,11 @@ class Dog{
     }
     if(this.inAir){
       debugger
-      this.yPos += 0.5;
+      this.yPos += this.arcDown(this.yPos);
       if(this.yPos >= 335){
         this.inAir = false;
       }
-      // this.jump = false;
     }
-    // this.index = 1;
     this.subIndex += 1;
     if( this.subIndex === 600 ){
       this.index = (this.index + 1) % 5;
@@ -208,9 +218,14 @@ function drawEnemy(){
   return img;
 }
 
+function drawBackground(){
+  let img = new Image();
+  img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
+  return img;
+}
 
 
-const game = new Game(document.getElementsByTagName('canvas')[0],800,500);
+const game = new Game(document.getElementsByTagName('canvas')[0],800,500, drawBackground());
 const enemy = new Enemy(document.getElementsByTagName('canvas')[0],800,500,drawEnemy());
 const enemy2 = new Enemy(document.getElementsByTagName('canvas')[0],800,500);
 const spirit = new Spirit(document.getElementsByTagName('canvas')[0],800,500);

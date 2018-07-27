@@ -20,17 +20,18 @@ class Game{
       this._ctx.drawImage(img, 0, 0, 800, 400)
     );
     this._floor();
-    if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 120) && dog.dogPosition()[1] >= 345){
-      window.alert('game over');
-      document.location.reload();
-    }else{
+    // if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && dog.dogPosition()[1] >= 335){
+    //   window.alert('game over');
+    //   document.location.reload();
+    // }else{
       setInterval(enemy.draw.bind(enemy),10);
       // setInterval(spirit.draw.bind(spirit),10);
       setInterval(dog.draw.bind(dog),10);
+      setInterval(trees.draw.bind(trees),10);
       // setInterval(enemy2.draw.bind(enemy2),1);
       dog.dogPosition();
       requestAnimationFrame(this.play.bind(this));
-    }
+    // }
   }
 
   _clear(){
@@ -181,7 +182,6 @@ class Dog{
       }
     }
     if(this.inAir){
-      debugger
       this.yPos += this.arcDown(this.yPos);
       if(this.yPos >= 335){
         this.inAir = false;
@@ -194,6 +194,8 @@ class Dog{
     }
   }
 }
+
+
 
 
 function drawDog(){
@@ -224,10 +226,28 @@ function drawBackground(){
   return img;
 }
 
+function drawTrees(){
+  let img = new Image();
+  img.src = "images/kisspng-sprite-desktop-wallpaper-fruit-tree-fir-tree-5ace4a93d182a1.6415131015234689478582.png";
+  return img;
+}
+
+class Trees{
+  constructor(canvas,image){
+    this._ctx = canvas.getContext('2d');
+    this.trees = image;
+  }
+
+  draw(){
+    this._ctx.drawImage(this.trees, 0, 747, 275, 350, 0, 185, 450, 340);
+  }
+}
+
 
 const game = new Game(document.getElementsByTagName('canvas')[0],800,500, drawBackground());
 const enemy = new Enemy(document.getElementsByTagName('canvas')[0],800,500,drawEnemy());
 const enemy2 = new Enemy(document.getElementsByTagName('canvas')[0],800,500);
 const spirit = new Spirit(document.getElementsByTagName('canvas')[0],800,500);
 const dog = new Dog(document.getElementsByTagName('canvas')[0],800,500,drawDogs());
+const trees = new Trees(document.getElementsByTagName('canvas')[0],drawTrees());
 game.play();

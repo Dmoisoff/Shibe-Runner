@@ -8,6 +8,7 @@ class Game{
     this.__clear = this._clear.bind(this);
     this._floor = this._floor.bind(this);
     this._reset = this._reset.bind(this);
+    this.subIndex = 0;
   }
 
   play(){
@@ -18,7 +19,7 @@ class Game{
       this._ctx.drawImage(img, 0, 0, 800, 400)
     );
     this._floor();
-    if((enemy.enemyPos()[0] > 75 && enemy.enemyPos()[0] < 120) && dog.dogPosition()[1] >= 345){
+    if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 120) && dog.dogPosition()[1] >= 345){
       window.alert('game over');
       document.location.reload();
     }else{
@@ -90,8 +91,6 @@ class Spirit {
     this.x = 789;
     this.y = 325;
     this.dx = .05;
-    this.ballRadius = 10;
-    this.makeBall = this.makeBall.bind(this);
   }
 
   draw() {
@@ -103,7 +102,6 @@ class Spirit {
         this.x = 789;
       }
       this.x += this.dx;
-
   }
 }
 
@@ -114,15 +112,18 @@ class Dog{
     this._width = width;
     this._height = height;
     this.xPos = 75;
-    this.yPos = 345;
+    this.yPos = 335;
     this.ballRadius = 10;
     this.jump = false;
-    // this.drawDog = this.drawDog.bind(this);
-    this.dog = this._ctx.fillRect(this.xPos, this.yPos, 45, 45);
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.KeyUpHandler = this.KeyUpHandler.bind(this);
     this.arc = this.arc.bind(this);
     this.pexelDog = image;
+    this.index = 0;
+    this.subIndex = 0;
+    document.addEventListener('keydown', this.KeyDownHandler, false);
+    // document.addEventListener('keyup', this.KeyUpHandler, false);
+    this.inAir = false;
   }
 
   KeyUpHandler(e){
@@ -132,10 +133,10 @@ class Dog{
   }
 
   KeyDownHandler(e){
-    if(e.keyCode === 32 || e.keyCode === 38){
-      if(!this.yPos <= 355){
+    if (!this.jump) {
+      if(e.keyCode === 32 || e.keyCode === 38){
         this.jump = true;
-      }
+    }
     }
   }
 
@@ -146,7 +147,8 @@ class Dog{
 
 
   arc(value){
-    if(value < 300){
+
+    if(value < 255){
       return(0.1);
     }else{
       return(0.5);
@@ -155,21 +157,30 @@ class Dog{
 
 
   draw(){
-    this._ctx.drawImage(this.pexelDog , this.xPos, this.yPos, 65, 65);
-    document.addEventListener('keydown', this.KeyDownHandler, false);
-    document.addEventListener('keyup', this.KeyUpHandler, false);
-    if(this.jump && this.yPos > 250 ){
+    // this._ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
+    this._ctx.drawImage(this.pexelDog, this.index*36.6, 264,  37.6,23.4, this.xPos, this.yPos, 85, 65);
+    // 235
+    if(this.jump && this.yPos > 235 ){
       this.yPos -= this.arc(this.yPos);
-      if(this.yPos === 250)
-      this.jump = false;
+      if(Math.floor(this.yPos) === 235){
+        this.jump = false;
+        this.inAir = true;
+      }
     }
-    if(!this.jump && this.yPos <= 345 ){
+    if(this.inAir){
+      debugger
       this.yPos += 0.5;
+      if(this.yPos >= 335){
+        this.inAir = false;
+      }
+      // this.jump = false;
     }
-    // else{
-    //   this.yPos = 345;
-    //   this.dog = this._ctx.fillRect(this.xPos, this.yPos, 45, 45);
-    // }
+    // this.index = 1;
+    this.subIndex += 1;
+    if( this.subIndex === 600 ){
+      this.index = (this.index + 1) % 5;
+      this.subIndex = 0;
+    }
   }
 }
 
@@ -179,6 +190,16 @@ function drawDog(){
   img.src = "images/shibe_1.png";
   return img;
 }
+function drawDog1(){
+  let img = new Image();
+  img.src = "images/shibe.png";
+  return img;
+}
+function drawDogs(){
+  let img = new Image();
+  img.src = "images/PC Computer - Planet Centauri - Shiba_full.png";
+  return img;
+}
 
 function drawEnemy(){
   let img = new Image();
@@ -186,9 +207,11 @@ function drawEnemy(){
   return img;
 }
 
+
+
 const game = new Game(document.getElementsByTagName('canvas')[0],800,500);
 const enemy = new Enemy(document.getElementsByTagName('canvas')[0],800,500,drawEnemy());
 const enemy2 = new Enemy(document.getElementsByTagName('canvas')[0],800,500);
 const spirit = new Spirit(document.getElementsByTagName('canvas')[0],800,500);
-const dog = new Dog(document.getElementsByTagName('canvas')[0],800,500,drawDog());
+const dog = new Dog(document.getElementsByTagName('canvas')[0],800,500,drawDogs());
 game.play();

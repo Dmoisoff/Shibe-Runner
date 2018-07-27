@@ -27,7 +27,7 @@ class Game{
       setInterval(enemy.draw.bind(enemy),10);
       // setInterval(spirit.draw.bind(spirit),10);
       setInterval(dog.draw.bind(dog),10);
-      setInterval(trees.draw.bind(trees),10);
+      // setInterval(trees.draw.bind(trees),10);
       // setInterval(enemy2.draw.bind(enemy2),1);
       dog.dogPosition();
       requestAnimationFrame(this.play.bind(this));

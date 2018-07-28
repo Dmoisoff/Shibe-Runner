@@ -13,9 +13,6 @@ class Enemy {
   }
 
   draw(_ctx) {
-    // debugger
-    // _ctx.clearRect(0,0,800,500);
-    // debugger
         _ctx.drawImage(this.image , this.x, this.y, 95,65);
         if(this.x >= 0-95){
           this.x -= this.speed;
@@ -24,6 +21,15 @@ class Enemy {
         //   this.x = 810;
         // }
 
+  }
+  collision(enemy, dog){
+    if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (dog.dogPosition()[1] >= 335) && enemy.enemyPos()[1] === 335){
+      return true;
+    }else if ((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (dog.dogPosition()[1] <= 300) && enemy.enemyPos()[1] === 275) {
+      return true;
+    }else{
+      return false;
+    }
   }
 }
 

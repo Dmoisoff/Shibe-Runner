@@ -18,6 +18,8 @@ class Spirit {
       }
       this.x += this.dx;
   }
+
+
 }
 
 

@@ -232,9 +232,6 @@ var Enemy = function () {
   }, {
     key: "draw",
     value: function draw(_ctx) {
-      // debugger
-      // _ctx.clearRect(0,0,800,500);
-      // debugger
       _ctx.drawImage(this.image, this.x, this.y, 95, 65);
       if (this.x >= 0 - 95) {
         this.x -= this.speed;
@@ -242,6 +239,17 @@ var Enemy = function () {
       // if(this.x <= 0-95){
       //   this.x = 810;
       // }
+    }
+  }, {
+    key: "collision",
+    value: function collision(enemy, dog) {
+      if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] >= 335 && enemy.enemyPos()[1] === 335) {
+        return true;
+      } else if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] <= 300 && enemy.enemyPos()[1] === 275) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }]);
 
@@ -324,14 +332,21 @@ var Game = function () {
         this._floor();
         this.generateBackground(this.image);
         if (enemy) {
-          if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && this.dog.dogPosition()[1] >= 335) {
-            // debugger
+          debugger;
+          if (enemy.collision(enemy, this.dog)) {
             this.restartGame();
             requestAnimationFrame(function () {
               _this.play();
             });
-            // window.alert(`gameover your score was ${this.currentScore}`);
-            // document.location.reload();
+            // if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (this.dog.dogPosition()[1] >= 335) && enemy.enemyPos()[1] === 335){
+            //   // debugger
+            //   this.restartGame();
+            //   requestAnimationFrame(() => {this.play();});
+            //   // window.alert(`gameover your score was ${this.currentScore}`);
+            //   // document.location.reload();
+            // }else if ((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (this.dog.dogPosition()[1] <= 300) && enemy.enemyPos()[1] === 275) {
+            //   this.restartGame();
+            //   requestAnimationFrame(() => {this.play();});
           } else {
             enemy.draw(this._ctx);
             enemy = this.removeEnemy(enemy);
@@ -345,9 +360,9 @@ var Game = function () {
           if (this.currentScore % 500 > 200) {
             this.enemySpeed += 1;
           }
-          if (this.currentScore % 600 > 400 || this.currentScore % 700 > 200) {
+          if (this.currentScore % 600 > 400) {
             // debugger
-            this.enemyheight = 335;
+            this.enemyheight = 275;
           } else {
             this.enemyheight = 335;
           }
@@ -363,17 +378,7 @@ var Game = function () {
   }, {
     key: 'generateBackground',
     value: function generateBackground(img) {
-      var _this2 = this;
-
-      if (!img.src) {
-        var _img = new Image();
-        _img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
-        return _img.onload = function () {
-          return _this2._ctx.drawImage(_img, 0, 0, 800, 400);
-        };
-      } else {
-        return this._ctx.drawImage(img, 0, 0, 800, 400);
-      }
+      return this._ctx.drawImage(img, 0, 0, 800, 400);
     }
   }, {
     key: 'drawScore',
@@ -448,6 +453,7 @@ var Game = function () {
 var pic1 = "images/PC Computer - Planet Centauri - Shiba_full.png";
 var pic2 = "images/Hexen-Spirit.png";
 var pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
+var pic4 = "images/download.png";
 
 function createImages(pic1, pic2, pic3) {
   var dogImage = new Image();
@@ -457,7 +463,7 @@ function createImages(pic1, pic2, pic3) {
     enemyImage.src = pic2;
     enemyImage.onload = function () {
       var mountFuji = new Image();
-      mountFuji.src = pic3;
+      mountFuji.src = pic4;
       mountFuji.onload = function () {
         debugger;
         // const enemy = new Enemy(document.getElementById('canvas'),800,500,enemyImage);

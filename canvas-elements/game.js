@@ -45,12 +45,19 @@ class Game{
       this._floor();
       this.generateBackground(this.image);
       if (enemy) {
-        if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && this.dog.dogPosition()[1] >= 335){
-          // debugger
+        debugger
+        if(enemy.collision(enemy, this.dog)){
           this.restartGame();
           requestAnimationFrame(() => {this.play();});
-          // window.alert(`gameover your score was ${this.currentScore}`);
-          // document.location.reload();
+        // if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (this.dog.dogPosition()[1] >= 335) && enemy.enemyPos()[1] === 335){
+        //   // debugger
+        //   this.restartGame();
+        //   requestAnimationFrame(() => {this.play();});
+        //   // window.alert(`gameover your score was ${this.currentScore}`);
+        //   // document.location.reload();
+        // }else if ((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (this.dog.dogPosition()[1] <= 300) && enemy.enemyPos()[1] === 275) {
+        //   this.restartGame();
+        //   requestAnimationFrame(() => {this.play();});
         }else{
           enemy.draw(this._ctx);
           enemy = this.removeEnemy(enemy);
@@ -62,9 +69,9 @@ class Game{
         if(this.currentScore % 500 > 200){
             this.enemySpeed += 1;
           }
-        if(this.currentScore % 600 > 400 || this.currentScore % 700 > 200){
+        if(this.currentScore % 600 > 400){
           // debugger
-          this.enemyheight = 335;
+          this.enemyheight = 275;
         }else{
           this.enemyheight = 335;
         }
@@ -78,15 +85,7 @@ class Game{
 
 
   generateBackground(img){
-    if(!img.src){
-      let img = new Image();
-      img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
-      return img.onload = () => (
-        this._ctx.drawImage(img, 0, 0, 800, 400)
-      );
-    }else{
       return this._ctx.drawImage(img, 0, 0, 800, 400);
-    }
   }
 
   drawScore(_ctx){
@@ -158,6 +157,7 @@ class Game{
 const pic1 = "images/PC Computer - Planet Centauri - Shiba_full.png";
 const pic2 = "images/Hexen-Spirit.png";
 const pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
+const pic4 = "images/download.png";
 
 function createImages(pic1, pic2, pic3){
   let dogImage = new Image();
@@ -167,7 +167,7 @@ function createImages(pic1, pic2, pic3){
     enemyImage.src = pic2;
     enemyImage.onload = () => {
       let mountFuji = new Image();
-      mountFuji.src = pic3;
+      mountFuji.src = pic4;
       mountFuji.onload = () => {
         debugger
         // const enemy = new Enemy(document.getElementById('canvas'),800,500,enemyImage);

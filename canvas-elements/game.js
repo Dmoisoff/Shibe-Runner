@@ -37,19 +37,25 @@ class Game{
       this.startGame();
       requestAnimationFrame(() => {this.play;});
     }else if (!this.playGame) {
+      debugger
+      enemy.draw(this._ctx);
+      enemy = this.removeEnemy(enemy);
+      this.dog.draw(this._ctx);
       this.restartGame();
-      requestAnimationFrame(() => {this.play;});
+      // requestAnimationFrame(() => {this.play;});
       }else{
-      this.currentScore += 1;
       this._ctx.clearRect(0,0,800,500);
       this._floor();
       this.generateBackground(this.image);
       if (enemy) {
-        debugger
         if(enemy.collision(enemy, this.dog)){
           this.restartGame();
-          requestAnimationFrame(() => {this.play();});
+          enemy.draw(this._ctx);
+          this.dog.draw(this._ctx);
+          this.drawScore(this._ctx);
+          requestAnimationFrame(() => {this.play(enemy);});
         }else{
+          this.currentScore += 1;
           enemy.draw(this._ctx);
           enemy = this.removeEnemy(enemy);
           this.dog.draw(this._ctx);

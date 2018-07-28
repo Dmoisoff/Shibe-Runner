@@ -244,6 +244,7 @@ var Enemy = function () {
     key: "collision",
     value: function collision(enemy, dog) {
       if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] >= 335 && enemy.enemyPos()[1] === 335) {
+        debugger;
         return true;
       } else if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] <= 300 && enemy.enemyPos()[1] === 275) {
         return true;
@@ -322,23 +323,27 @@ var Game = function () {
           _this.play;
         });
       } else if (!this.playGame) {
+        debugger;
+        enemy.draw(this._ctx);
+        enemy = this.removeEnemy(enemy);
+        this.dog.draw(this._ctx);
         this.restartGame();
-        requestAnimationFrame(function () {
-          _this.play;
-        });
+        // requestAnimationFrame(() => {this.play;});
       } else {
-        this.currentScore += 1;
         this._ctx.clearRect(0, 0, 800, 500);
         this._floor();
         this.generateBackground(this.image);
         if (enemy) {
-          debugger;
           if (enemy.collision(enemy, this.dog)) {
             this.restartGame();
+            enemy.draw(this._ctx);
+            this.dog.draw(this._ctx);
+            this.drawScore(this._ctx);
             requestAnimationFrame(function () {
-              _this.play();
+              _this.play(enemy);
             });
           } else {
+            this.currentScore += 1;
             enemy.draw(this._ctx);
             enemy = this.removeEnemy(enemy);
             this.dog.draw(this._ctx);

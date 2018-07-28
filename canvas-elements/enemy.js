@@ -24,6 +24,7 @@ class Enemy {
   }
   collision(enemy, dog){
     if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (dog.dogPosition()[1] >= 335) && enemy.enemyPos()[1] === 335){
+      debugger
       return true;
     }else if ((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (dog.dogPosition()[1] <= 300) && enemy.enemyPos()[1] === 275) {
       return true;

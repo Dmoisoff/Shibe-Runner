@@ -38,6 +38,9 @@ class Game{
       requestAnimationFrame(() => {this.play;});
     }else if (!this.playGame) {
       debugger
+      this._ctx.clearRect(0,0,800,500);
+      this._floor();
+      this.generateBackground(this.image);
       enemy.draw(this._ctx);
       enemy = this.removeEnemy(enemy);
       this.dog.draw(this._ctx);
@@ -64,7 +67,7 @@ class Game{
         }
       }else{
         if(this.currentScore % 500 > 200){
-            this.enemySpeed += 1;
+            this.enemySpeed += .3;
           }
         if(this.currentScore % 600 > 400){
           // debugger

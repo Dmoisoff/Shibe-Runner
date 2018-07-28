@@ -236,15 +236,11 @@ var Enemy = function () {
       if (this.x >= 0 - 95) {
         this.x -= this.speed;
       }
-      // if(this.x <= 0-95){
-      //   this.x = 810;
-      // }
     }
   }, {
     key: "collision",
     value: function collision(enemy, dog) {
       if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 135 && dog.dogPosition()[1] >= 325 && enemy.enemyPos()[1] === 335) {
-        debugger;
         return true;
       } else if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] <= 300 && enemy.enemyPos()[1] === 275) {
         return true;
@@ -281,11 +277,12 @@ var Spirit = __webpack_require__(/*! ./spirit */ "./canvas-elements/spirit.js");
 var Score = __webpack_require__(/*! ./score */ "./canvas-elements/score.js");
 
 var Game = function () {
-  function Game(canvas, width, height, mountFuji, dogImage, enemyImage) {
+  function Game(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage) {
     _classCallCheck(this, Game);
 
     this.dog = new Dog(dogImage);
     this.enemyImage = enemyImage;
+    this.spiritImage = spiritImage;
     canvas.width = width;
     canvas.height = height;
     this._width = width;
@@ -300,79 +297,90 @@ var Game = function () {
     this.currentScore = 1;
     this.playGame = false;
     this.enemySpeed = 4;
-    this.enemyGenerationRate = 1;
     this.enemyheight = 335;
   }
 
   _createClass(Game, [{
-    key: 'enemyGenerator',
-    value: function enemyGenerator(enemySpeed, height) {
-      var enemy = new Enemy(this.enemyImage, enemySpeed, height);
-      return enemy;
-    }
-  }, {
     key: 'play',
-    value: function play(enemy) {
+    value: function play(enemy, spirit) {
       var _this = this;
 
       if (!this.playGame && this.currentScore === 1) {
-        this._floor();
-        this.generateBackground(this.image);
+        debugger;
         this.startGame();
         requestAnimationFrame(function () {
           _this.play;
         });
       } else if (!this.playGame) {
         debugger;
-        this._ctx.clearRect(0, 0, 800, 500);
-        this._floor();
-        this.generateBackground(this.image);
-        enemy.draw(this._ctx);
-        enemy = this.removeEnemy(enemy);
-        this.dog.draw(this._ctx);
-        this.restartGame();
-        // requestAnimationFrame(() => {this.play;});
+        this.restartGame(enemy);
       } else {
         this._ctx.clearRect(0, 0, 800, 500);
         this._floor();
         this.generateBackground(this.image);
-        if (enemy) {
-          if (enemy.collision(enemy, this.dog)) {
-            this.restartGame();
-            enemy.draw(this._ctx);
-            this.dog.draw(this._ctx);
-            this.drawScore(this._ctx);
-            requestAnimationFrame(function () {
-              _this.play(enemy);
-            });
-          } else {
-            this.currentScore += 1;
-            enemy.draw(this._ctx);
-            enemy = this.removeEnemy(enemy);
-            this.dog.draw(this._ctx);
-            this.drawScore(this._ctx);
-            requestAnimationFrame(function () {
-              _this.play(enemy);
-            });
+        if (!enemy || !spirit) {
+          debugger;
+          if (!enemy) {
+            enemy = this.enemyGenerator(this.currentScore);
           }
+          if (!spirit) {
+            spirit = this.spiritGenerator(this.currentScore);
+          }
+          this.currentScore += 1;
+          this.dog.draw(this._ctx);
+          enemy.draw(this._ctx);
+          spirit.draw(this._ctx);
+          this.drawScore(this._ctx);
+          requestAnimationFrame(function () {
+            _this.play(enemy, spirit);
+          });
+        } else if (enemy.collision(enemy, this.dog)) {
+          debugger;
+          this.restartGame(enemy, spirit);
+          requestAnimationFrame(function () {
+            _this.play(enemy, spirit);
+          });
         } else {
-          if (this.currentScore % 500 > 200) {
-            this.enemySpeed += .3;
-          }
-          if (this.currentScore % 600 > 400) {
-            // debugger
-            this.enemyheight = 275;
-          } else {
-            this.enemyheight = 335;
-          }
-          enemy = this.enemyGenerator(this.enemySpeed, this.enemyheight);
+          debugger;
+          this.currentScore += 1;
+          enemy.draw(this._ctx);
+          spirit.draw(this._ctx);
+          enemy = this.removeEnemy(enemy);
+          spirit = this.removeSpirit(spirit);
           this.dog.draw(this._ctx);
           this.drawScore(this._ctx);
           requestAnimationFrame(function () {
-            _this.play(enemy);
+            _this.play(enemy, spirit);
           });
         }
       }
+    }
+  }, {
+    key: 'enemyGenerator',
+    value: function enemyGenerator(score) {
+      debugger;
+      if (score % 500 > 200) {
+        this.enemySpeed += .3;
+      }
+      if (score % 600 > 400) {
+        this.enemyheight = 275;
+      } else {
+        this.enemyheight = 335;
+      }
+      var enemy = new Enemy(this.enemyImage, this.enemySpeed, this.enemyheight);
+      return enemy;
+    }
+  }, {
+    key: 'spiritGenerator',
+    value: function spiritGenerator(score) {
+      var height = void 0;
+      if (this.enemyheight === 335) {
+        height = 275;
+      } else {
+        height = 335;
+      }
+      var spirit = new Spirit(this.spiritImage, this.enemySpeed, height);
+      return spirit;
     }
   }, {
     key: 'generateBackground',
@@ -402,6 +410,8 @@ var Game = function () {
   }, {
     key: 'startGame',
     value: function startGame() {
+      this._floor();
+      this.generateBackground(this.image);
       document.addEventListener('keydown', this.KeyDownHandler, false);
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(150, 75, 500, 300);
@@ -412,7 +422,12 @@ var Game = function () {
     }
   }, {
     key: 'restartGame',
-    value: function restartGame() {
+    value: function restartGame(enemy) {
+      this._ctx.clearRect(0, 0, 800, 500);
+      this._floor();
+      this.generateBackground(this.image);
+      enemy.draw(this._ctx);
+      this.dog.draw(this._ctx);
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(150, 75, 500, 300);
       this._ctx.font = "32px Arial";
@@ -444,6 +459,15 @@ var Game = function () {
         return enemy;
       }
     }
+  }, {
+    key: 'removeSpirit',
+    value: function removeSpirit(spirit) {
+      if (spirit.spiritPos()[0] < -95) {
+        return null;
+      } else {
+        return spirit;
+      }
+    }
   }]);
 
   return Game;
@@ -453,6 +477,7 @@ var pic1 = "images/PC Computer - Planet Centauri - Shiba_full.png";
 var pic2 = "images/Hexen-Spirit.png";
 var pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
 var pic4 = "images/download.png";
+var pic5 = "images/PC Computer - Soreyuke Burunyanman Hardcore - Ghost.png";
 
 function createImages(pic1, pic2, pic3) {
   var dogImage = new Image();
@@ -461,65 +486,21 @@ function createImages(pic1, pic2, pic3) {
     var enemyImage = new Image();
     enemyImage.src = pic2;
     enemyImage.onload = function () {
-      var mountFuji = new Image();
-      mountFuji.src = pic4;
-      mountFuji.onload = function () {
-        debugger;
-        // const enemy = new Enemy(document.getElementById('canvas'),800,500,enemyImage);
-        // const dog = new Dog(document.getElementById('canvas'),800,500,dogImage);
-        var game = new Game(document.getElementById('canvas'), 800, 500, mountFuji, dogImage, enemyImage);
-        game.play();
+      var spiritImage = new Image();
+      spiritImage.src = pic5;
+      spiritImage.onload = function () {
+        var mountFuji = new Image();
+        mountFuji.src = pic4;
+        mountFuji.onload = function () {
+          var game = new Game(document.getElementById('canvas'), 800, 500, mountFuji, dogImage, enemyImage, spiritImage);
+          game.play();
+        };
       };
     };
   };
 }
 
 createImages(pic1, pic2, pic3);
-
-// attachBackground(){
-//   let img = new Image();
-//   img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
-//   return img;
-// }
-
-// function drawDog(){
-//   let img = new Image();
-//   img.src = "images/shibe_1.png";
-//   return img;
-// }
-// function drawDog1(){
-//   let img = new Image();
-//   img.src = "images/shibe.png";
-//   return img;
-// }
-
-// function drawDogs(){
-//   let img = new Image();
-//   img.src = "images/PC Computer - Planet Centauri - Shiba_full.png";
-//   return img;
-// }
-//
-// function drawEnemy(){
-//   let img = new Image();
-//   img.src = "images/Hexen-Spirit.png";
-//   return img;
-// }
-//
-// function drawBackground(){
-//   let img = new Image();
-//   img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
-//   return img;
-// }
-//
-//
-//
-// const game = new Game(document.getElementById('canvas'),800,500, drawBackground());
-// const enemy = new Enemy(document.getElementById('canvas'),800,500,drawEnemy());
-// // const enemy2 = new Enemy(document.getElementById('canvas'),800,500);
-// // const spirit = new Spirit(document.getElementById('canvas'),800,500);
-// const dog = new Dog(document.getElementById('canvas'),800,500,drawDogs());
-// // const trees = new Trees(document.getElementById('canvas'),drawTrees());
-// game.play();
 
 /***/ }),
 
@@ -578,28 +559,39 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Spirit = function () {
-  function Spirit(canvas, width, height) {
+  function Spirit(image, speed, height) {
     _classCallCheck(this, Spirit);
 
-    this._ctx = canvas.getContext('2d');
-    this._width = width;
-    this._height = height;
+    this.image = image;
     this.x = 789;
-    this.y = 325;
+    this.y = height;
     this.dx = .05;
+    this.speed = speed;
   }
 
   _createClass(Spirit, [{
-    key: 'draw',
-    value: function draw() {
-      this.makeBall();
-      if (this.x + this.dx > this._width - this.ballRadius) {
-        this.dx = -this.dx;
+    key: "spiritPos",
+    value: function spiritPos() {
+      return [this.x, this.y];
+    }
+  }, {
+    key: "draw",
+    value: function draw(_ctx) {
+      _ctx.drawImage(this.image, this.x, this.y, 95, 65);
+      if (this.x >= 0 - 95) {
+        this.x -= this.speed;
       }
-      if (this.x - this.dx < 0) {
-        this.x = 789;
+    }
+  }, {
+    key: "collision",
+    value: function collision(spirit, dog) {
+      if (spirit.spiritPos()[0] > 0 && spirit.spiritPos()[0] < 135 && dog.dogPosition()[1] >= 325 && spirit.spiritPos()[1] === 335) {
+        return true;
+      } else if (spirit.spiritPos()[0] > 0 && spirit.spiritPos()[0] < 125 && dog.dogPosition()[1] <= 300 && spirit.spiritPos()[1] === 275) {
+        return true;
+      } else {
+        return false;
       }
-      this.x += this.dx;
     }
   }]);
 

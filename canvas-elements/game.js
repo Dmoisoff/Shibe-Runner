@@ -4,9 +4,10 @@ const Spirit = require('./spirit');
 const Score = require('./score');
 
 class Game{
-  constructor(canvas, width, height, mountFuji, dogImage, enemyImage){
+  constructor(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage){
     this.dog = new Dog(dogImage);
     this.enemyImage = enemyImage;
+    this.spiritImage = spiritImage;
     canvas.width = width;
     canvas.height = height;
     this._width = width;
@@ -21,66 +22,76 @@ class Game{
     this.currentScore = 1;
     this.playGame = false;
     this.enemySpeed = 4;
-    this.enemyGenerationRate = 1;
     this.enemyheight = 335;
   }
 
-  enemyGenerator(enemySpeed, height){
-    const enemy = new Enemy(this.enemyImage, enemySpeed, height);
-    return enemy;
-  }
-
-  play(enemy){
+  play(enemy, spirit){
     if(!this.playGame && this.currentScore === 1){
-      this._floor();
-      this.generateBackground(this.image);
+      debugger
       this.startGame();
       requestAnimationFrame(() => {this.play;});
     }else if (!this.playGame) {
       debugger
+      this.restartGame(enemy);
+    }else{
       this._ctx.clearRect(0,0,800,500);
       this._floor();
       this.generateBackground(this.image);
-      enemy.draw(this._ctx);
-      enemy = this.removeEnemy(enemy);
-      this.dog.draw(this._ctx);
-      this.restartGame();
-      // requestAnimationFrame(() => {this.play;});
-      }else{
-      this._ctx.clearRect(0,0,800,500);
-      this._floor();
-      this.generateBackground(this.image);
-      if (enemy) {
-        if(enemy.collision(enemy, this.dog)){
-          this.restartGame();
-          enemy.draw(this._ctx);
-          this.dog.draw(this._ctx);
-          this.drawScore(this._ctx);
-          requestAnimationFrame(() => {this.play(enemy);});
-        }else{
-          this.currentScore += 1;
-          enemy.draw(this._ctx);
-          enemy = this.removeEnemy(enemy);
-          this.dog.draw(this._ctx);
-          this.drawScore(this._ctx);
-          requestAnimationFrame(() => {this.play(enemy);});
+      if (!enemy || !spirit) {
+        debugger
+        if(!enemy ){
+          enemy = this.enemyGenerator(this.currentScore);
         }
-      }else{
-        if(this.currentScore % 500 > 200){
-            this.enemySpeed += .3;
-          }
-        if(this.currentScore % 600 > 400){
-          // debugger
-          this.enemyheight = 275;
-        }else{
-          this.enemyheight = 335;
+        if(!spirit){
+          spirit = this.spiritGenerator(this.currentScore);
         }
-        enemy = this.enemyGenerator(this.enemySpeed, this.enemyheight);
+        this.currentScore += 1;
+        this.dog.draw(this._ctx);
+        enemy.draw(this._ctx);
+        spirit.draw(this._ctx);
+        this.drawScore(this._ctx);
+        requestAnimationFrame(() => {this.play(enemy, spirit);});
+      }else if(enemy.collision(enemy, this.dog)){
+        debugger
+          this.restartGame(enemy, spirit);
+          requestAnimationFrame(() => {this.play(enemy, spirit);});
+      }else{
+        debugger
+        this.currentScore += 1;
+        enemy.draw(this._ctx);
+        spirit.draw(this._ctx);
+        enemy = this.removeEnemy(enemy);
+        spirit = this.removeSpirit(spirit);
         this.dog.draw(this._ctx);
         this.drawScore(this._ctx);
-        requestAnimationFrame(() => {this.play(enemy);});
+        requestAnimationFrame(() => {this.play(enemy,spirit);});
       }
     }
+  }
+
+  enemyGenerator(score){
+    debugger
+    if(score % 500 > 200){
+      this.enemySpeed += .3;
+    }
+    if(score % 600 > 400){
+      this.enemyheight = 275;
+    }else{
+      this.enemyheight = 335;
+    }
+    const enemy = new Enemy(this.enemyImage, this.enemySpeed, this.enemyheight);
+    return enemy;
+  }
+
+  spiritGenerator(score){
+    let height;
+    if(this.enemyheight === 335){
+      height = 275;
+    }else{
+      height = 335;
+    }
+    const spirit = new Spirit(this.spiritImage, this.enemySpeed, height);
+    return spirit;
   }
 
 
@@ -107,6 +118,8 @@ class Game{
   }
 
   startGame(){
+    this._floor();
+    this.generateBackground(this.image);
     document.addEventListener('keydown', this.KeyDownHandler, false);
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
     this._ctx.fillRect(150, 75, 500, 300);
@@ -116,7 +129,12 @@ class Game{
     this._ctx.fillText(`to start the game.`, 280, 155);
   }
 
-  restartGame(){
+  restartGame(enemy){
+    this._ctx.clearRect(0,0,800,500);
+    this._floor();
+    this.generateBackground(this.image);
+    enemy.draw(this._ctx);
+    this.dog.draw(this._ctx);
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
     this._ctx.fillRect(150, 75, 500, 300);
     this._ctx.font = "32px Arial";
@@ -147,6 +165,14 @@ class Game{
     }
   }
 
+  removeSpirit(spirit){
+    if(spirit.spiritPos()[0] < -95){
+      return null;
+    }else{
+      return spirit;
+    }
+  }
+
 
 
 }
@@ -158,6 +184,7 @@ const pic1 = "images/PC Computer - Planet Centauri - Shiba_full.png";
 const pic2 = "images/Hexen-Spirit.png";
 const pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
 const pic4 = "images/download.png";
+const pic5 = "images/PC Computer - Soreyuke Burunyanman Hardcore - Ghost.png";
 
 function createImages(pic1, pic2, pic3){
   let dogImage = new Image();
@@ -166,62 +193,18 @@ function createImages(pic1, pic2, pic3){
     let enemyImage = new Image();
     enemyImage.src = pic2;
     enemyImage.onload = () => {
-      let mountFuji = new Image();
-      mountFuji.src = pic4;
-      mountFuji.onload = () => {
-        debugger
-        // const enemy = new Enemy(document.getElementById('canvas'),800,500,enemyImage);
-        // const dog = new Dog(document.getElementById('canvas'),800,500,dogImage);
-        const game = new Game(document.getElementById('canvas'),800,500, mountFuji, dogImage, enemyImage );
-        game.play();
+      let spiritImage = new Image();
+      spiritImage.src = pic5;
+      spiritImage.onload = () =>{
+        let mountFuji = new Image();
+        mountFuji.src = pic4;
+        mountFuji.onload = () => {
+          const game = new Game(document.getElementById('canvas'),800,500, mountFuji, dogImage, enemyImage, spiritImage);
+          game.play();
+        };
       };
     };
   };
 }
 
 createImages(pic1, pic2, pic3);
-
-// attachBackground(){
-//   let img = new Image();
-//   img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
-//   return img;
-// }
-
-// function drawDog(){
-//   let img = new Image();
-//   img.src = "images/shibe_1.png";
-//   return img;
-// }
-// function drawDog1(){
-//   let img = new Image();
-//   img.src = "images/shibe.png";
-//   return img;
-// }
-
-// function drawDogs(){
-//   let img = new Image();
-//   img.src = "images/PC Computer - Planet Centauri - Shiba_full.png";
-//   return img;
-// }
-//
-// function drawEnemy(){
-//   let img = new Image();
-//   img.src = "images/Hexen-Spirit.png";
-//   return img;
-// }
-//
-// function drawBackground(){
-//   let img = new Image();
-//   img.src = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
-//   return img;
-// }
-//
-//
-//
-// const game = new Game(document.getElementById('canvas'),800,500, drawBackground());
-// const enemy = new Enemy(document.getElementById('canvas'),800,500,drawEnemy());
-// // const enemy2 = new Enemy(document.getElementById('canvas'),800,500);
-// // const spirit = new Spirit(document.getElementById('canvas'),800,500);
-// const dog = new Dog(document.getElementById('canvas'),800,500,drawDogs());
-// // const trees = new Trees(document.getElementById('canvas'),drawTrees());
-// game.play();

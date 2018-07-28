@@ -1,22 +1,30 @@
 class Spirit {
-  constructor(canvas, width, height){
-    this._ctx = canvas.getContext('2d');
-    this._width = width;
-    this._height = height;
+  constructor(image, speed, height){
+    this.image = image;
     this.x = 789;
-    this.y = 325;
+    this.y = height;
     this.dx = .05;
+    this.speed = speed;
+  }
+  spiritPos(){
+    return [this.x, this.y];
   }
 
-  draw() {
-      this.makeBall();
-      if(this.x + this.dx > this._width-this.ballRadius ) {
-      this.dx = -this.dx;
-      }
-      if(this.x - this.dx < 0){
-        this.x = 789;
-      }
-      this.x += this.dx;
+  draw(_ctx) {
+        _ctx.drawImage(this.image , this.x, this.y, 95,65);
+        if(this.x >= 0-95){
+          this.x -= this.speed;
+        }
+  }
+
+  collision(spirit, dog){
+    if((spirit.spiritPos()[0] > 0 && spirit.spiritPos()[0] < 135) && (dog.dogPosition()[1] >= 325) && spirit.spiritPos()[1] === 335){
+      return true;
+    }else if ((spirit.spiritPos()[0] > 0 && spirit.spiritPos()[0] < 125) && (dog.dogPosition()[1] <= 300) && spirit.spiritPos()[1] === 275) {
+      return true;
+    }else{
+      return false;
+    }
   }
 
 

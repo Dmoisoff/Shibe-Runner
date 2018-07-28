@@ -17,14 +17,10 @@ class Enemy {
         if(this.x >= 0-95){
           this.x -= this.speed;
         }
-        // if(this.x <= 0-95){
-        //   this.x = 810;
-        // }
-
   }
+
   collision(enemy, dog){
     if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 135) && (dog.dogPosition()[1] >= 325) && enemy.enemyPos()[1] === 335){
-      debugger
       return true;
     }else if ((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (dog.dogPosition()[1] <= 300) && enemy.enemyPos()[1] === 275) {
       return true;

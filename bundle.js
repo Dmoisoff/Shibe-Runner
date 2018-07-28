@@ -338,15 +338,6 @@ var Game = function () {
             requestAnimationFrame(function () {
               _this.play();
             });
-            // if((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (this.dog.dogPosition()[1] >= 335) && enemy.enemyPos()[1] === 335){
-            //   // debugger
-            //   this.restartGame();
-            //   requestAnimationFrame(() => {this.play();});
-            //   // window.alert(`gameover your score was ${this.currentScore}`);
-            //   // document.location.reload();
-            // }else if ((enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125) && (this.dog.dogPosition()[1] <= 300) && enemy.enemyPos()[1] === 275) {
-            //   this.restartGame();
-            //   requestAnimationFrame(() => {this.play();});
           } else {
             enemy.draw(this._ctx);
             enemy = this.removeEnemy(enemy);

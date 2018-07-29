@@ -278,6 +278,7 @@ const pic2 = "images/Hexen-Spirit.png";
 const pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
 const pic4 = "images/download.png";
 const pic5 = "images/PC Computer - Soreyuke Burunyanman Hardcore - Ghost_for_game.png";
+const pic6 = "images/spirit_pixel_removed.png";
 
 function createImages(pic1, pic2, pic3){
   let dogImage = new Image();
@@ -287,7 +288,7 @@ function createImages(pic1, pic2, pic3){
     enemyImage.src = pic2;
     enemyImage.onload = () => {
       let spiritImage = new Image();
-      spiritImage.src = pic5;
+      spiritImage.src = pic6;
       spiritImage.onload = () =>{
         let mountFuji = new Image();
         mountFuji.src = pic4;

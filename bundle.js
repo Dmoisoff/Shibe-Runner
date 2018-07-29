@@ -579,6 +579,7 @@ var pic2 = "images/Hexen-Spirit.png";
 var pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
 var pic4 = "images/download.png";
 var pic5 = "images/PC Computer - Soreyuke Burunyanman Hardcore - Ghost_for_game.png";
+var pic6 = "images/spirit_pixel_removed.png";
 
 function createImages(pic1, pic2, pic3) {
   var dogImage = new Image();
@@ -588,7 +589,7 @@ function createImages(pic1, pic2, pic3) {
     enemyImage.src = pic2;
     enemyImage.onload = function () {
       var spiritImage = new Image();
-      spiritImage.src = pic5;
+      spiritImage.src = pic6;
       spiritImage.onload = function () {
         var mountFuji = new Image();
         mountFuji.src = pic4;
@@ -681,7 +682,8 @@ var Spirit = function () {
     key: "draw",
     value: function draw(_ctx) {
       // _ctx.drawImage(this.image , this.x, this.y, 95,65);
-      _ctx.drawImage(this.image, this.index * 96, 174, 95, 90, this.x, this.y, 65, 60);
+      _ctx.drawImage(this.image, this.index * 650, 1266, 660, 619, this.x, this.y, 65, 60);
+      // _ctx.drawImage(this.image, this.index*96, 174, 95, 90, this.x, this.y, 65, 60);
       if (this.x >= 0 - 95) {
         this.x -= this.speed;
       }

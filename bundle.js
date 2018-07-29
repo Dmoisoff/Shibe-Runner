@@ -281,15 +281,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Dog = __webpack_require__(/*! ./dog */ "./canvas-elements/dog.js");
 var Enemy = __webpack_require__(/*! ./enemy */ "./canvas-elements/enemy.js");
 var Spirit = __webpack_require__(/*! ./spirit */ "./canvas-elements/spirit.js");
+var Ground = __webpack_require__(/*! ./ground */ "./canvas-elements/ground.js");
 var Score = __webpack_require__(/*! ./score */ "./canvas-elements/score.js");
 
 var Game = function () {
-  function Game(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage) {
+  function Game(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage) {
     _classCallCheck(this, Game);
 
     this.dog = new Dog(dogImage);
     this.enemyImage = enemyImage;
     this.spiritImage = spiritImage;
+    this.groundImage = groundImage;
     canvas.width = width;
     canvas.height = height;
     this._width = width;
@@ -318,6 +320,8 @@ var Game = function () {
 
       this.count += 1;
       if (!this.playGame && this.currentScore === 1) {
+        debugger;
+        // this._ctx.drawImage(this.groundImage, 0, 395, 1000, 110);
         this.count -= 1;
         this.startGame();
         requestAnimationFrame(function () {
@@ -332,8 +336,8 @@ var Game = function () {
         this.pauseGame(enemy, spirit);
       } else {
         this._ctx.clearRect(0, 0, 800, 500);
-        this._floor();
         this.generateBackground(this.image);
+        this._floor();
         if (!enemy) {
           enemy = this.enemyGenerator(this.currentScore);
           if (spirit) {
@@ -361,9 +365,6 @@ var Game = function () {
               spirit.draw(this._ctx);
             }
           }
-          // if(spirit){
-          //   spirit.draw(this._ctx);
-          // }
         } else {
           spirit.draw(this._ctx);
         }
@@ -374,7 +375,6 @@ var Game = function () {
               _this.play(enemy, spirit);
             });
           }
-          // enemy = this.removeEnemy(enemy);
         }
         if (spirit) {
           if (spirit.collision(spirit, this.dog)) {
@@ -418,9 +418,6 @@ var Game = function () {
       } else {
         height = 335;
       }
-      // if(this.count === 1){
-      //   height = -1000;
-      // }
       var spirit = new Spirit(this.spiritImage, this.enemySpeed, height);
       return spirit;
     }
@@ -446,14 +443,31 @@ var Game = function () {
   }, {
     key: '_floor',
     value: function _floor() {
-      this._ctx.fillStyle = 'rgba(146,98,57,1)';
-      this._ctx.fillRect(0, 400, 1000, 100);
+      this._ctx.drawImage(this.groundImage, 0, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 52, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 104, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 156, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 208, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 260, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 312, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 364, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 406, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 458, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 510, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 562, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 604, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 656, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 708, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 760, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 810, 395, 52, 110);
+      // this._ctx.fillStyle = 'rgba(146,98,57,1)';
+      // this._ctx.fillRect(0, 400, 1000, 100);
     }
   }, {
     key: 'startGame',
     value: function startGame() {
-      this._floor();
       this.generateBackground(this.image);
+      this._floor();
       document.addEventListener('keydown', this.KeyDownHandler, false);
       document.addEventListener('keydown', this.pauseHandler, false);
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
@@ -467,8 +481,8 @@ var Game = function () {
     key: 'restartGame',
     value: function restartGame(enemy, spirit) {
       this._ctx.clearRect(0, 0, 800, 500);
-      this._floor();
       this.generateBackground(this.image);
+      this._floor();
       enemy.draw(this._ctx);
       this.dog.draw(this._ctx);
       if (spirit) {
@@ -580,6 +594,7 @@ var pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
 var pic4 = "images/download.png";
 var pic5 = "images/PC Computer - Soreyuke Burunyanman Hardcore - Ghost_for_game.png";
 var pic6 = "images/spirit_pixel_removed.png";
+var pic7 = "images/groundfiles/Ground Tiles copy.png";
 
 function createImages(pic1, pic2, pic3) {
   var dogImage = new Image();
@@ -592,10 +607,14 @@ function createImages(pic1, pic2, pic3) {
       spiritImage.src = pic6;
       spiritImage.onload = function () {
         var mountFuji = new Image();
-        mountFuji.src = pic4;
+        mountFuji.src = pic3;
         mountFuji.onload = function () {
-          var game = new Game(document.getElementById('canvas'), 800, 500, mountFuji, dogImage, enemyImage, spiritImage);
-          game.play();
+          var groundImage = new Image();
+          groundImage.src = pic7;
+          groundImage.onload = function () {
+            var game = new Game(document.getElementById('canvas'), 800, 500, mountFuji, dogImage, enemyImage, spiritImage, groundImage);
+            game.play();
+          };
         };
       };
     };
@@ -603,6 +622,57 @@ function createImages(pic1, pic2, pic3) {
 }
 
 createImages(pic1, pic2, pic3);
+
+/***/ }),
+
+/***/ "./canvas-elements/ground.js":
+/*!***********************************!*\
+  !*** ./canvas-elements/ground.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Ground = function () {
+  function Ground(image) {
+    _classCallCheck(this, Ground);
+
+    this.image = image;
+  }
+
+  _createClass(Ground, [{
+    key: "draw",
+    value: function draw(_ctx) {
+      this._ctx.drawImage(this.groundImage, 0, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 52, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 104, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 156, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 208, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 260, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 312, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 364, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 406, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 458, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 510, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 562, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 604, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 656, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 708, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 760, 395, 52, 110);
+      this._ctx.drawImage(this.groundImage, 810, 395, 52, 110);
+    }
+  }]);
+
+  return Ground;
+}();
+
+module.exports = Ground;
 
 /***/ }),
 
@@ -681,9 +751,7 @@ var Spirit = function () {
   }, {
     key: "draw",
     value: function draw(_ctx) {
-      // _ctx.drawImage(this.image , this.x, this.y, 95,65);
       _ctx.drawImage(this.image, this.index * 650, 1266, 660, 619, this.x, this.y, 65, 60);
-      // _ctx.drawImage(this.image, this.index*96, 174, 95, 90, this.x, this.y, 65, 60);
       if (this.x >= 0 - 95) {
         this.x -= this.speed;
       }

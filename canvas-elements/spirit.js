@@ -13,9 +13,7 @@ class Spirit {
   }
 
   draw(_ctx) {
-        // _ctx.drawImage(this.image , this.x, this.y, 95,65);
         _ctx.drawImage(this.image, this.index*650, 1266, 660, 619, this.x, this.y, 65, 60);
-        // _ctx.drawImage(this.image, this.index*96, 174, 95, 90, this.x, this.y, 65, 60);
         if(this.x >= 0-95){
           this.x -= this.speed;
         }

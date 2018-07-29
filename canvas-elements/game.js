@@ -1,13 +1,15 @@
 const Dog = require('./dog');
 const Enemy = require('./enemy');
 const Spirit = require('./spirit');
+const Ground = require('./ground');
 const Score = require('./score');
 
 class Game{
-  constructor(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage){
+  constructor(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage){
     this.dog = new Dog(dogImage);
     this.enemyImage = enemyImage;
     this.spiritImage = spiritImage;
+    this.groundImage = groundImage;
     canvas.width = width;
     canvas.height = height;
     this._width = width;
@@ -32,6 +34,8 @@ class Game{
   play(enemy, spirit){
     this.count += 1;
     if(!this.playGame && this.currentScore === 1){
+      debugger
+      // this._ctx.drawImage(this.groundImage, 0, 395, 1000, 110);
       this.count -= 1;
       this.startGame();
       requestAnimationFrame(() => {this.play;});
@@ -44,8 +48,8 @@ class Game{
       this.pauseGame(enemy,spirit);
     }else{
       this._ctx.clearRect(0,0,800,500);
-      this._floor();
       this.generateBackground(this.image);
+      this._floor();
         if(!enemy){
           enemy = this.enemyGenerator(this.currentScore);
           if (spirit){
@@ -73,9 +77,6 @@ class Game{
               spirit.draw(this._ctx);
             }
           }
-          // if(spirit){
-          //   spirit.draw(this._ctx);
-          // }
         }else{
           spirit.draw(this._ctx);
         }
@@ -84,7 +85,6 @@ class Game{
             this.restartGame(enemy, spirit);
             requestAnimationFrame(() => {this.play(enemy, spirit);});
           }
-          // enemy = this.removeEnemy(enemy);
         }
         if(spirit){
           if(spirit.collision(spirit, this.dog)){
@@ -124,9 +124,6 @@ class Game{
     }else{
       height = 335;
     }
-    // if(this.count === 1){
-    //   height = -1000;
-    // }
     const spirit = new Spirit(this.spiritImage, this.enemySpeed, height);
     return spirit;
   }
@@ -150,13 +147,30 @@ class Game{
   }
 
   _floor(){
-    this._ctx.fillStyle = 'rgba(146,98,57,1)';
-    this._ctx.fillRect(0, 400, 1000, 100);
+    this._ctx.drawImage(this.groundImage, 0, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 52, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 104, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 156, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 208, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 260, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 312, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 364, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 406, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 458, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 510, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 562, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 604, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 656, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 708, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 760, 395, 52, 110);
+    this._ctx.drawImage(this.groundImage, 810, 395, 52, 110);
+    // this._ctx.fillStyle = 'rgba(146,98,57,1)';
+    // this._ctx.fillRect(0, 400, 1000, 100);
   }
 
   startGame(){
-    this._floor();
     this.generateBackground(this.image);
+    this._floor();
     document.addEventListener('keydown', this.KeyDownHandler, false);
     document.addEventListener('keydown', this.pauseHandler, false);
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
@@ -169,8 +183,8 @@ class Game{
 
   restartGame(enemy,spirit){
     this._ctx.clearRect(0,0,800,500);
-    this._floor();
     this.generateBackground(this.image);
+    this._floor();
     enemy.draw(this._ctx);
     this.dog.draw(this._ctx);
     if(spirit){
@@ -279,6 +293,9 @@ const pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
 const pic4 = "images/download.png";
 const pic5 = "images/PC Computer - Soreyuke Burunyanman Hardcore - Ghost_for_game.png";
 const pic6 = "images/spirit_pixel_removed.png";
+const pic7 = "images/groundfiles/Ground Tiles copy.png";
+
+
 
 function createImages(pic1, pic2, pic3){
   let dogImage = new Image();
@@ -291,10 +308,14 @@ function createImages(pic1, pic2, pic3){
       spiritImage.src = pic6;
       spiritImage.onload = () =>{
         let mountFuji = new Image();
-        mountFuji.src = pic4;
+        mountFuji.src = pic3;
         mountFuji.onload = () => {
-          const game = new Game(document.getElementById('canvas'),800,500, mountFuji, dogImage, enemyImage, spiritImage);
-          game.play();
+          let groundImage = new Image();
+          groundImage.src = pic7;
+          groundImage.onload = () => {
+            const game = new Game(document.getElementById('canvas'),800,500, mountFuji, dogImage, enemyImage, spiritImage, groundImage);
+            game.play();
+          };
         };
       };
     };

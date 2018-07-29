@@ -5,15 +5,23 @@ class Spirit {
     this.y = height;
     this.dx = .05;
     this.speed = speed;
+    this.index = 0;
+    this.subIndex = 0;
   }
   spiritPos(){
     return [this.x, this.y];
   }
 
   draw(_ctx) {
-        _ctx.drawImage(this.image , this.x, this.y, 95,65);
+        // _ctx.drawImage(this.image , this.x, this.y, 95,65);
+        _ctx.drawImage(this.image, this.index*96, 174, 95, 90, this.x, this.y, 65, 60);
         if(this.x >= 0-95){
           this.x -= this.speed;
+        }
+        this.subIndex += 1;
+        if( this.subIndex >= 10 ){
+          this.index = (this.index + 1) % 3;
+          this.subIndex = 0;
         }
   }
 

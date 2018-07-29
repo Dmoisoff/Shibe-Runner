@@ -14,6 +14,8 @@ class Dog{
     document.addEventListener('keyup', this.KeyUpHandler, false);
     this.jump = false;
     this.inAir = false;
+    this.count = 0;
+    this.movementRate = 1;
   }
 
   KeyUpHandler(e){
@@ -77,10 +79,15 @@ class Dog{
         this.inAir = false;
       }
     }
-    this.subIndex += 1;
-    if( this.subIndex === 10 ){
+    this.subIndex += this.movementRate;
+    if( this.subIndex >= 10 ){
       this.index = (this.index + 1) % 5;
       this.subIndex = 0;
+    }
+    this.count += 1;
+    if (this.count === 1000 ) {
+      this.movementRate += .5;
+      this.count = 1;
     }
   }
 }

@@ -3,13 +3,15 @@ const Enemy = require('./enemy');
 const Spirit = require('./spirit');
 const Ground = require('./ground');
 const Score = require('./score');
+const Leaf = require('./leaf');
 
 class Game{
-  constructor(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage){
+  constructor(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems){
     this.dog = new Dog(dogImage);
     this.enemyImage = enemyImage;
     this.spiritImage = spiritImage;
     this.groundImage = groundImage;
+    this.cherryBlossems = cherryBlossems;
     canvas.width = width;
     canvas.height = height;
     this._width = width;
@@ -21,9 +23,10 @@ class Game{
     this.pauseHandler = this.pauseHandler.bind(this);
     this.enemyGenerator = this.enemyGenerator.bind(this);
     this.play = this.play.bind(this);
-    // this.leaf = this.leaf.bind(this);
+    this.leafGenerator = this.leafGenerator.bind(this);
+    this.leafDrawer = this.leafDrawer.bind(this);
     this.count = 0;
-    this.currentScore = 1;
+    this.currentScore = null;
     this.playGame = false;
     this.enemySpeed = 4;
     this.enemyheight = 335;
@@ -32,13 +35,15 @@ class Game{
     this.spirit = null;
     this.top = [];
     this.generatedScore = false;
+    this.generatedLeafs = false;
+    this.blossoms = [];
+    this.username = [];
   }
 
   play(enemy, spirit){
     this.count += 1;
-    if(!this.playGame && this.currentScore === 1){
-      // debugger
-      // this.leaf()
+    debugger
+    if(!this.playGame && (this.currentScore === null || this.currentScore.score() === 1)){
       // this._ctx.drawImage(this.groundImage, 0, 395, 1000, 110);
       this.count -= 1;
       this.startGame();
@@ -53,9 +58,10 @@ class Game{
     }else{
       this._ctx.clearRect(0,0,800,500);
       this.generateBackground(this.image);
+      // this.leafDrawer();
       this._floor();
         if(!enemy){
-          enemy = this.enemyGenerator(this.currentScore);
+          enemy = this.enemyGenerator(this.currentScore.score());
           if (spirit){
             if(this.enemySpiritCollision(enemy, spirit)){
               enemy = null;
@@ -73,7 +79,7 @@ class Game{
         if(!spirit && this.count < Math.floor(Math.random() * 31) + 50){
           spirit = null;
         }else if(!spirit){
-          spirit = this.spiritGenerator(this.currentScore);
+          spirit = this.spiritGenerator(this.currentScore.score());
           if (spirit){
             if(this.enemySpiritCollision(enemy, spirit)){
               spirit = null;
@@ -97,7 +103,7 @@ class Game{
             spirit = this.removeSpirit(spirit, enemy);
           }
         }
-      this.currentScore += 1;
+      this.currentScore.updateScore(1);
       enemy = this.removeEnemy(enemy);
       this.dog.draw(this._ctx);
       this.drawScore(this._ctx);
@@ -139,7 +145,7 @@ class Game{
   drawScore(_ctx){
     _ctx.font = "16px Arial";
     _ctx.fillStyle = "rgba(0, 0, 0, 1)";
-    _ctx.fillText(`Score: ${this.currentScore}`, 8, 20);
+    _ctx.fillText(`Score: ${this.currentScore.score()}`, 8, 20);
   }
 
 
@@ -161,7 +167,11 @@ class Game{
     //   this.top = localStorage.topFive.split(',');
     //   this.postScore();
     // }
+    this.currentScore = new Score(1, this.top);
+    this._ctx.clearRect(0,0,800,500);
     this.generateBackground(this.image);
+    this.leafGenerator();
+    // this.leafDrawer();
     this._floor();
     document.addEventListener('keydown', this.KeyDownHandler, false);
     document.addEventListener('keydown', this.pauseHandler, false);
@@ -176,6 +186,7 @@ class Game{
   restartGame(enemy,spirit){
     this._ctx.clearRect(0,0,800,500);
     this.generateBackground(this.image);
+    // this.leafDrawer();
     this._floor();
     enemy.draw(this._ctx);
     this.dog.draw(this._ctx);
@@ -189,11 +200,11 @@ class Game{
     this._ctx.fillText(`Press Enter`, 268, 115);
     this._ctx.fillText(`to restart the game.`, 195, 155);
     this._ctx.fillText(`Your score was`, 220, 205);
-    this._ctx.fillText(`${(this.currentScore - 1)}`, 370, 245);
+    this._ctx.fillText(`${(this.currentScore.score() - 1)}`, 370, 245);
     if(!this.generatedScore){
 
-      this.topFive(this.currentScore);
-      this.postScore();
+      this.currentScore.topFive(this.currentScore.score());
+      this.currentScore.postScore();
       this.generatedScore = true;
     }
 
@@ -216,14 +227,14 @@ class Game{
     this._ctx.fillText(`The game is paused`, 245, 115);
     this._ctx.fillText(`press p to start.`, 280, 155);
     this._ctx.fillText(`Your current score is`, 245, 205);
-    this._ctx.fillText(`${this.currentScore}`, 360, 245);
+    this._ctx.fillText(`${this.currentScore.score()}`, 360, 245);
   }
 
   KeyDownHandler(e){
     if (!this.playGame) {
       if(e.keyCode === 13){
         this.playGame = true;
-        this.currentScore = 1;
+        this.currentScore.resetScore();
         this.enemySpeed = 4;
         this.generatedScore = false;
         this.play();
@@ -249,7 +260,7 @@ class Game{
 
   removeSpirit(spirit, enemy){
     if(spirit.collision(spirit, this.dog)){
-      this.currentScore += 250;
+      this.currentScore.updateScore(250);
       this.count = 0;
       return null;
     }
@@ -276,42 +287,44 @@ class Game{
     return false;
   }
 
-  topFive(newScore){
-    // debugger
-    let added = false;
-    if (!this.top.length){
-    return this.top = [newScore];
-    }
-    let newTop = this.top;
-    for (let i = 0; i < this.top.length; i++) {
-      if(this.top[i] <= newScore){
-        newTop = ([...this.top.slice(0,i), newScore, ...this.top.slice(i)]);
-        this.top = newTop;
-        added = true;
+  usernameHandler(e){
+    switch (e.keycode) {
+      case 81:
+        this.username.push('q');
         break;
-      }
+      case 87:
+        this.username.push('w');
+        break;
+      case 69:
+        this.username.push('e');
+        break;
+      case 82:
+        this.username.push('r');
+        break;
+      default:
+
     }
-    if(!added){
-      newTop = [...this.top, newScore];
-    }
-    while(newTop.length > 5){
-      newTop.pop();
-    }
-    this.top = newTop;
   }
 
-  postScore(){
-    // document.getElementById('scores').removeChild('li');
-    for (let i = 0; i < this.top.length; i++) {
-      let li = document.createElement('li');
-      li.className += '' + 'control-instruction-styling';
-      li.setAttribute("id", `score ${i}`);
-      li.innerHTML = this.top[i];
-      document.getElementById(`score ${i}`).replaceWith(li);
-    }
-    // localStorage['topFive'] = this.top;
+  username(){
+    document.addEventListener('keydown', this.usernameHandler, false);
   }
 
+  leafGenerator(){
+    if(!this.generatedLeafs)
+    for (let i = 0; i < 1; i++) {
+      const leaf = new Leaf(this.cherryBlossems, 10 , 37 , 1);
+      leaf.draw(this._ctx);
+      this.blossoms.push(leaf);
+    }
+    this.generatedLeafs = true;
+  }
+
+  leafDrawer(){
+    this.blossoms.forEach((leaf) =>{
+      leaf.draw(this._ctx);
+    });
+  }
 
 
 }
@@ -327,6 +340,7 @@ const pic5 = "images/PC Computer - Soreyuke Burunyanman Hardcore - Ghost_for_gam
 const pic6 = "images/spirit_pixel_removed.png";
 const pic7 = "images/groundfiles/Ground Tiles copy.png";
 const pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
+const pic9 = "images/cherry_blossems_sprites.png";
 
 
 
@@ -343,11 +357,15 @@ function createImages(pic1, pic2, pic3){
         let mountFuji = new Image();
         mountFuji.src = pic8;
         mountFuji.onload = () => {
-          let groundImage = new Image();
-          groundImage.src = pic7;
-          groundImage.onload = () => {
-            const game = new Game(document.getElementById('canvas'),800,500, mountFuji, dogImage, enemyImage, spiritImage, groundImage);
-            game.play();
+          let cherryBlossems = new Image();
+          cherryBlossems.src = pic9;
+          cherryBlossems.onload = () =>{
+            let groundImage = new Image();
+            groundImage.src = pic7;
+            groundImage.onload = () => {
+              const game = new Game(document.getElementById('canvas'),800,500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems);
+              game.play();
+            };
           };
         };
       };

@@ -276,8 +276,6 @@ module.exports = Enemy;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Dog = __webpack_require__(/*! ./dog */ "./canvas-elements/dog.js");
@@ -285,15 +283,17 @@ var Enemy = __webpack_require__(/*! ./enemy */ "./canvas-elements/enemy.js");
 var Spirit = __webpack_require__(/*! ./spirit */ "./canvas-elements/spirit.js");
 var Ground = __webpack_require__(/*! ./ground */ "./canvas-elements/ground.js");
 var Score = __webpack_require__(/*! ./score */ "./canvas-elements/score.js");
+var Leaf = __webpack_require__(/*! ./leaf */ "./canvas-elements/leaf.js");
 
 var Game = function () {
-  function Game(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage) {
+  function Game(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems) {
     _classCallCheck(this, Game);
 
     this.dog = new Dog(dogImage);
     this.enemyImage = enemyImage;
     this.spiritImage = spiritImage;
     this.groundImage = groundImage;
+    this.cherryBlossems = cherryBlossems;
     canvas.width = width;
     canvas.height = height;
     this._width = width;
@@ -305,9 +305,10 @@ var Game = function () {
     this.pauseHandler = this.pauseHandler.bind(this);
     this.enemyGenerator = this.enemyGenerator.bind(this);
     this.play = this.play.bind(this);
-    // this.leaf = this.leaf.bind(this);
+    this.leafGenerator = this.leafGenerator.bind(this);
+    this.leafDrawer = this.leafDrawer.bind(this);
     this.count = 0;
-    this.currentScore = 1;
+    this.currentScore = null;
     this.playGame = false;
     this.enemySpeed = 4;
     this.enemyheight = 335;
@@ -316,6 +317,9 @@ var Game = function () {
     this.spirit = null;
     this.top = [];
     this.generatedScore = false;
+    this.generatedLeafs = false;
+    this.blossoms = [];
+    this.username = [];
   }
 
   _createClass(Game, [{
@@ -324,9 +328,8 @@ var Game = function () {
       var _this = this;
 
       this.count += 1;
-      if (!this.playGame && this.currentScore === 1) {
-        // debugger
-        // this.leaf()
+      debugger;
+      if (!this.playGame && (this.currentScore === null || this.currentScore.score() === 1)) {
         // this._ctx.drawImage(this.groundImage, 0, 395, 1000, 110);
         this.count -= 1;
         this.startGame();
@@ -343,9 +346,10 @@ var Game = function () {
       } else {
         this._ctx.clearRect(0, 0, 800, 500);
         this.generateBackground(this.image);
+        // this.leafDrawer();
         this._floor();
         if (!enemy) {
-          enemy = this.enemyGenerator(this.currentScore);
+          enemy = this.enemyGenerator(this.currentScore.score());
           if (spirit) {
             if (this.enemySpiritCollision(enemy, spirit)) {
               enemy = null;
@@ -363,7 +367,7 @@ var Game = function () {
         if (!spirit && this.count < Math.floor(Math.random() * 31) + 50) {
           spirit = null;
         } else if (!spirit) {
-          spirit = this.spiritGenerator(this.currentScore);
+          spirit = this.spiritGenerator(this.currentScore.score());
           if (spirit) {
             if (this.enemySpiritCollision(enemy, spirit)) {
               spirit = null;
@@ -389,7 +393,7 @@ var Game = function () {
             spirit = this.removeSpirit(spirit, enemy);
           }
         }
-        this.currentScore += 1;
+        this.currentScore.updateScore(1);
         enemy = this.removeEnemy(enemy);
         this.dog.draw(this._ctx);
         this.drawScore(this._ctx);
@@ -436,7 +440,7 @@ var Game = function () {
     value: function drawScore(_ctx) {
       _ctx.font = "16px Arial";
       _ctx.fillStyle = "rgba(0, 0, 0, 1)";
-      _ctx.fillText('Score: ' + this.currentScore, 8, 20);
+      _ctx.fillText('Score: ' + this.currentScore.score(), 8, 20);
     }
   }, {
     key: '_drawBorder',
@@ -460,7 +464,11 @@ var Game = function () {
       //   this.top = localStorage.topFive.split(',');
       //   this.postScore();
       // }
+      this.currentScore = new Score(1, this.top);
+      this._ctx.clearRect(0, 0, 800, 500);
       this.generateBackground(this.image);
+      this.leafGenerator();
+      // this.leafDrawer();
       this._floor();
       document.addEventListener('keydown', this.KeyDownHandler, false);
       document.addEventListener('keydown', this.pauseHandler, false);
@@ -476,6 +484,7 @@ var Game = function () {
     value: function restartGame(enemy, spirit) {
       this._ctx.clearRect(0, 0, 800, 500);
       this.generateBackground(this.image);
+      // this.leafDrawer();
       this._floor();
       enemy.draw(this._ctx);
       this.dog.draw(this._ctx);
@@ -489,11 +498,11 @@ var Game = function () {
       this._ctx.fillText('Press Enter', 268, 115);
       this._ctx.fillText('to restart the game.', 195, 155);
       this._ctx.fillText('Your score was', 220, 205);
-      this._ctx.fillText('' + (this.currentScore - 1), 370, 245);
+      this._ctx.fillText('' + (this.currentScore.score() - 1), 370, 245);
       if (!this.generatedScore) {
 
-        this.topFive(this.currentScore);
-        this.postScore();
+        this.currentScore.topFive(this.currentScore.score());
+        this.currentScore.postScore();
         this.generatedScore = true;
       }
 
@@ -517,7 +526,7 @@ var Game = function () {
       this._ctx.fillText('The game is paused', 245, 115);
       this._ctx.fillText('press p to start.', 280, 155);
       this._ctx.fillText('Your current score is', 245, 205);
-      this._ctx.fillText('' + this.currentScore, 360, 245);
+      this._ctx.fillText('' + this.currentScore.score(), 360, 245);
     }
   }, {
     key: 'KeyDownHandler',
@@ -525,7 +534,7 @@ var Game = function () {
       if (!this.playGame) {
         if (e.keyCode === 13) {
           this.playGame = true;
-          this.currentScore = 1;
+          this.currentScore.resetScore();
           this.enemySpeed = 4;
           this.generatedScore = false;
           this.play();
@@ -555,7 +564,7 @@ var Game = function () {
     key: 'removeSpirit',
     value: function removeSpirit(spirit, enemy) {
       if (spirit.collision(spirit, this.dog)) {
-        this.currentScore += 250;
+        this.currentScore.updateScore(250);
         this.count = 0;
         return null;
       }
@@ -583,42 +592,48 @@ var Game = function () {
       return false;
     }
   }, {
-    key: 'topFive',
-    value: function topFive(newScore) {
-      // debugger
-      var added = false;
-      if (!this.top.length) {
-        return this.top = [newScore];
-      }
-      var newTop = this.top;
-      for (var i = 0; i < this.top.length; i++) {
-        if (this.top[i] <= newScore) {
-          newTop = [].concat(_toConsumableArray(this.top.slice(0, i)), [newScore], _toConsumableArray(this.top.slice(i)));
-          this.top = newTop;
-          added = true;
+    key: 'usernameHandler',
+    value: function usernameHandler(e) {
+      switch (e.keycode) {
+        case 81:
+          this.username.push('q');
           break;
-        }
+        case 87:
+          this.username.push('w');
+          break;
+        case 69:
+          this.username.push('e');
+          break;
+        case 82:
+          this.username.push('r');
+          break;
+        default:
+
       }
-      if (!added) {
-        newTop = [].concat(_toConsumableArray(this.top), [newScore]);
-      }
-      while (newTop.length > 5) {
-        newTop.pop();
-      }
-      this.top = newTop;
     }
   }, {
-    key: 'postScore',
-    value: function postScore() {
-      // document.getElementById('scores').removeChild('li');
-      for (var i = 0; i < this.top.length; i++) {
-        var li = document.createElement('li');
-        li.className += '' + 'control-instruction-styling';
-        li.setAttribute("id", 'score ' + i);
-        li.innerHTML = this.top[i];
-        document.getElementById('score ' + i).replaceWith(li);
+    key: 'username',
+    value: function username() {
+      document.addEventListener('keydown', this.usernameHandler, false);
+    }
+  }, {
+    key: 'leafGenerator',
+    value: function leafGenerator() {
+      if (!this.generatedLeafs) for (var i = 0; i < 1; i++) {
+        var leaf = new Leaf(this.cherryBlossems, 10, 37, 1);
+        leaf.draw(this._ctx);
+        this.blossoms.push(leaf);
       }
-      // localStorage['topFive'] = this.top;
+      this.generatedLeafs = true;
+    }
+  }, {
+    key: 'leafDrawer',
+    value: function leafDrawer() {
+      var _this2 = this;
+
+      this.blossoms.forEach(function (leaf) {
+        leaf.draw(_this2._ctx);
+      });
     }
   }]);
 
@@ -633,6 +648,7 @@ var pic5 = "images/PC Computer - Soreyuke Burunyanman Hardcore - Ghost_for_game.
 var pic6 = "images/spirit_pixel_removed.png";
 var pic7 = "images/groundfiles/Ground Tiles copy.png";
 var pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
+var pic9 = "images/cherry_blossems_sprites.png";
 
 function createImages(pic1, pic2, pic3) {
   var dogImage = new Image();
@@ -647,11 +663,15 @@ function createImages(pic1, pic2, pic3) {
         var mountFuji = new Image();
         mountFuji.src = pic8;
         mountFuji.onload = function () {
-          var groundImage = new Image();
-          groundImage.src = pic7;
-          groundImage.onload = function () {
-            var game = new Game(document.getElementById('canvas'), 800, 500, mountFuji, dogImage, enemyImage, spiritImage, groundImage);
-            game.play();
+          var cherryBlossems = new Image();
+          cherryBlossems.src = pic9;
+          cherryBlossems.onload = function () {
+            var groundImage = new Image();
+            groundImage.src = pic7;
+            groundImage.onload = function () {
+              var game = new Game(document.getElementById('canvas'), 800, 500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems);
+              game.play();
+            };
           };
         };
       };
@@ -714,6 +734,76 @@ module.exports = Ground;
 
 /***/ }),
 
+/***/ "./canvas-elements/leaf.js":
+/*!*********************************!*\
+  !*** ./canvas-elements/leaf.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Leaf = function () {
+  function Leaf(image, iteration, x, speed) {
+    _classCallCheck(this, Leaf);
+
+    this.image = image;
+    this.xPos = iteration * x;
+    this.yPos = -50;
+    this.dx = speed;
+    this.dy = speed;
+    this.movementRate = speed;
+    this.index = 0;
+    this.subIndex = 0;
+    this.count = 0;
+    this.xStart = iteration * x;
+    // this.yStart = 0;
+  }
+
+  _createClass(Leaf, [{
+    key: "pos",
+    value: function pos() {
+      return [this.xPos, this.yPos];
+    }
+  }, {
+    key: "draw",
+    value: function draw(ctx) {
+      // let dx = 0;
+      // let dy = 395;
+      ctx.drawImage(this.image, this.index * 17, 0, 16, 18, this.xPos, this.yPos, 45, 45);
+      this.yPos += this.dy;
+      this.xPos -= this.dx;
+
+      this.subIndex += this.movementRate;
+      if (this.subIndex >= 10) {
+        this.index = (this.index + 1) % 2;
+        this.subIndex = 0;
+      }
+      this.count += 1;
+      if (this.count === 1000) {
+        this.movementRate += .5;
+        this.count = 1;
+      }
+
+      if (this.yPos > 400 || this.xPos > 800) {
+        this.xPos = this.xStart;
+        this.yPos = 0;
+      }
+    }
+  }]);
+
+  return Leaf;
+}();
+
+module.exports = Leaf;
+
+/***/ }),
+
 /***/ "./canvas-elements/score.js":
 /*!**********************************!*\
   !*** ./canvas-elements/score.js ***!
@@ -726,49 +816,68 @@ module.exports = Ground;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Score = function () {
-  function Score(startScore) {
+  function Score(startScore, topFive) {
     _classCallCheck(this, Score);
 
     this.currentScore = startScore;
-    this.top = [];
+    this.top = topFive;
   }
 
   _createClass(Score, [{
-    key: "drawScore",
-    value: function drawScore(_ctx, currentScore) {
-      _ctx.font = "16px Arial";
-      _ctx.fillStyle = "#0095DD";
-      _ctx.fillText("Score: " + currentScore, 8, 20);
+    key: "updateScore",
+    value: function updateScore(newScore) {
+      this.currentScore = this.currentScore + newScore;
+    }
+  }, {
+    key: "resetScore",
+    value: function resetScore() {
+      this.currentScore = 0;
     }
   }, {
     key: "score",
     value: function score() {
-      this.currentScore;
+      return this.currentScore;
+    }
+  }, {
+    key: "drawScore",
+    value: function drawScore(_ctx) {
+      _ctx.font = "16px Arial";
+      _ctx.fillStyle = "rgba(0, 0, 0, 1)";
+      _ctx.fillText("Score: " + this.currentScore, 8, 20);
     }
   }, {
     key: "topFive",
     value: function topFive(newScore) {
+      // debugger
+      var added = false;
+      if (!this.top.length) {
+        return this.top = [newScore];
+      }
       var newTop = this.top;
       for (var i = 0; i < this.top.length; i++) {
-        if (this.top[i] < newScore) {
-          newTop = this.top.slice(0, i) + newScore + this.top.slice(i);
-          while (newTop.length > 5) {
-            newTop.pop();
-          }
+        if (this.top[i] <= newScore) {
+          newTop = [].concat(_toConsumableArray(this.top.slice(0, i)), [newScore], _toConsumableArray(this.top.slice(i)));
           this.top = newTop;
+          added = true;
           break;
         }
+      }
+      if (!added) {
+        newTop = [].concat(_toConsumableArray(this.top), [newScore]);
+      }
+      while (newTop.length > 5) {
+        newTop.pop();
       }
       this.top = newTop;
     }
   }, {
     key: "postScore",
     value: function postScore() {
-      // debugger
-
       // document.getElementById('scores').removeChild('li');
       for (var i = 0; i < this.top.length; i++) {
         var li = document.createElement('li');
@@ -777,11 +886,34 @@ var Score = function () {
         li.innerHTML = this.top[i];
         document.getElementById("score " + i).replaceWith(li);
       }
+      // localStorage['topFive'] = this.top;
+    }
+  }, {
+    key: "usernameHandler",
+    value: function usernameHandler(e) {
+      switch (e.keycode) {
+        case 81:
+          this.username.push('q');
+          break;
+        case 87:
+          this.username.push('w');
+          break;
+        case 69:
+          this.username.push('e');
+          break;
+        case 82:
+          this.username.push('r');
+          break;
+        default:
+
+      }
     }
   }]);
 
   return Score;
 }();
+
+module.exports = Score;
 
 /***/ }),
 

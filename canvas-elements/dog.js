@@ -65,7 +65,7 @@ class Dog{
     // _ctx.clearRect(0,0,800,500);
     // debugger
     // _ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
-    _ctx.drawImage(this.pexelDog, this.index*36.6, 264,  37.6,23.4, this.xPos, this.yPos, 85, 65);
+    _ctx.drawImage(this.pexelDog, (this.index * 36.6), 264,  37.6,23.4, this.xPos, this.yPos, 85, 65);
     if(this.jump && this.yPos > 235 ){
       this.yPos -= this.arcUp(this.yPos);
       if(Math.floor(this.yPos) <= 235){

@@ -60,3 +60,20 @@ h3{
   margin-top: 5px; */
   margin: 10px;
 }
+
+.links{
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.icon-placement{
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.icon-size{
+  display: block;
+  width: 50%;
+  height: auto;
+}

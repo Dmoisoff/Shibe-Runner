@@ -485,10 +485,10 @@ var Game = function () {
       document.addEventListener('keydown', this.pauseHandler, false);
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(150, 75, 500, 300);
-      this._ctx.font = "32px Arial";
+      this._ctx.font = "32px Shojumaru, cursive";
       this._ctx.fillStyle = "rgba(255,183,197,1)";
-      this._ctx.fillText('Press Enter', 320, 115);
-      this._ctx.fillText('to start the game.', 280, 155);
+      this._ctx.fillText('Press Enter', 268, 115);
+      this._ctx.fillText('to start the game.', 210, 155);
     }
   }, {
     key: 'restartGame',
@@ -503,12 +503,12 @@ var Game = function () {
       }
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(150, 75, 500, 300);
-      this._ctx.font = "32px Arial";
+      this._ctx.font = "32px Shojumaru, cursive";
       this._ctx.fillStyle = "rgba(255,183,197,1)";
-      this._ctx.fillText('Press Enter', 320, 115);
-      this._ctx.fillText('to restart the game.', 280, 155);
-      this._ctx.fillText('Your score was', 280, 205);
-      this._ctx.fillText('' + this.currentScore, 360, 245);
+      this._ctx.fillText('Press Enter', 268, 115);
+      this._ctx.fillText('to restart the game.', 195, 155);
+      this._ctx.fillText('Your score was', 220, 205);
+      this._ctx.fillText('' + (this.currentScore - 1), 370, 245);
       if (!this.generatedScore) {
 
         this.topFive(this.currentScore);

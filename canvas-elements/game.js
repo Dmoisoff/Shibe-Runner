@@ -37,12 +37,11 @@ class Game{
     this.generatedScore = false;
     this.generatedLeafs = false;
     this.blossoms = [];
-    this.username = [];
   }
 
   play(enemy, spirit){
     this.count += 1;
-    debugger
+    // debugger
     if(!this.playGame && (this.currentScore === null || this.currentScore.score() === 1)){
       // this._ctx.drawImage(this.groundImage, 0, 395, 1000, 110);
       this.count -= 1;

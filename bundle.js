@@ -319,7 +319,6 @@ var Game = function () {
     this.generatedScore = false;
     this.generatedLeafs = false;
     this.blossoms = [];
-    this.username = [];
   }
 
   _createClass(Game, [{
@@ -328,7 +327,7 @@ var Game = function () {
       var _this = this;
 
       this.count += 1;
-      debugger;
+      // debugger
       if (!this.playGame && (this.currentScore === null || this.currentScore.score() === 1)) {
         // this._ctx.drawImage(this.groundImage, 0, 395, 1000, 110);
         this.count -= 1;
@@ -826,6 +825,7 @@ var Score = function () {
 
     this.currentScore = startScore;
     this.top = topFive;
+    this.username = [];
   }
 
   _createClass(Score, [{
@@ -878,7 +878,6 @@ var Score = function () {
   }, {
     key: "postScore",
     value: function postScore() {
-      // document.getElementById('scores').removeChild('li');
       for (var i = 0; i < this.top.length; i++) {
         var li = document.createElement('li');
         li.className += '' + 'control-instruction-styling';
@@ -886,7 +885,11 @@ var Score = function () {
         li.innerHTML = this.top[i];
         document.getElementById("score " + i).replaceWith(li);
       }
-      // localStorage['topFive'] = this.top;
+    }
+  }, {
+    key: "username",
+    value: function username() {
+      document.addEventListener('keydown', this.usernameHandler);
     }
   }, {
     key: "usernameHandler",
@@ -903,6 +906,80 @@ var Score = function () {
           break;
         case 82:
           this.username.push('r');
+          break;
+        case 84:
+          this.username.push('t');
+          break;
+        case 89:
+          this.username.push('y');
+          break;
+        case 85:
+          this.username.push('u');
+          break;
+        case 73:
+          this.username.push('i');
+          break;
+        case 79:
+          this.username.push('o');
+          break;
+        case 80:
+          this.username.push('p');
+          break;
+        case 65:
+          this.username.push('a');
+          break;
+        case 83:
+          this.username.push('s');
+          break;
+        case 68:
+          this.username.push('d');
+          break;
+        case 70:
+          this.username.push('f');
+          break;
+        case 71:
+          this.username.push('g');
+          break;
+        case 72:
+          this.username.push('h');
+          break;
+        case 74:
+          this.username.push('j');
+          break;
+        case 75:
+          this.username.push('k');
+          break;
+        case 76:
+          this.username.push('l');
+          break;
+        case 90:
+          this.username.push('z');
+          break;
+        case 88:
+          this.username.push('x');
+          break;
+        case 67:
+          this.username.push('c');
+          break;
+        case 86:
+          this.username.push('v');
+          break;
+        case 66:
+          this.username.push('b');
+          break;
+        case 78:
+          this.username.push('n');
+          break;
+        case 77:
+          this.username.push('m');
+          break;
+        case 8:
+          this.username.pop();
+          break;
+        case 13:
+          if (this.username.length === 3) {
+            this.topFive();
+          }
           break;
         default:
 

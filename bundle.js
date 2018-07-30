@@ -276,6 +276,8 @@ module.exports = Enemy;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Dog = __webpack_require__(/*! ./dog */ "./canvas-elements/dog.js");
@@ -303,6 +305,7 @@ var Game = function () {
     this.pauseHandler = this.pauseHandler.bind(this);
     this.enemyGenerator = this.enemyGenerator.bind(this);
     this.play = this.play.bind(this);
+    // this.leaf = this.leaf.bind(this);
     this.count = 0;
     this.currentScore = 1;
     this.playGame = false;
@@ -311,6 +314,8 @@ var Game = function () {
     this.pause = false;
     this.enemy = null;
     this.spirit = null;
+    this.top = [];
+    this.generatedScore = false;
   }
 
   _createClass(Game, [{
@@ -320,7 +325,8 @@ var Game = function () {
 
       this.count += 1;
       if (!this.playGame && this.currentScore === 1) {
-        debugger;
+        // debugger
+        // this.leaf()
         // this._ctx.drawImage(this.groundImage, 0, 395, 1000, 110);
         this.count -= 1;
         this.startGame();
@@ -397,7 +403,6 @@ var Game = function () {
   }, {
     key: 'enemyGenerator',
     value: function enemyGenerator(score) {
-
       if (score % 500 > 200) {
         this.enemySpeed += .4;
       }
@@ -443,29 +448,37 @@ var Game = function () {
   }, {
     key: '_floor',
     value: function _floor() {
-      this._ctx.drawImage(this.groundImage, 0, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 52, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 104, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 156, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 208, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 260, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 312, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 364, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 406, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 458, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 510, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 562, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 604, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 656, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 708, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 760, 395, 52, 110);
-      this._ctx.drawImage(this.groundImage, 810, 395, 52, 110);
+      var start = 52;
+      for (var i = 0; i < 18; i++) {
+        this._ctx.drawImage(this.groundImage, start * i, 395, 52, 110);
+      }
+      // this._ctx.drawImage(this.groundImage, 0, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 52, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 104, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 156, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 208, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 260, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 312, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 364, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 406, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 458, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 510, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 562, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 604, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 656, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 708, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 760, 395, 52, 110);
+      // this._ctx.drawImage(this.groundImage, 810, 395, 52, 110);
       // this._ctx.fillStyle = 'rgba(146,98,57,1)';
       // this._ctx.fillRect(0, 400, 1000, 100);
     }
   }, {
     key: 'startGame',
     value: function startGame() {
+      // if(localStorage.topFive){
+      //   this.top = localStorage.topFive.split(',');
+      //   this.postScore();
+      // }
       this.generateBackground(this.image);
       this._floor();
       document.addEventListener('keydown', this.KeyDownHandler, false);
@@ -496,6 +509,13 @@ var Game = function () {
       this._ctx.fillText('to restart the game.', 280, 155);
       this._ctx.fillText('Your score was', 280, 205);
       this._ctx.fillText('' + this.currentScore, 360, 245);
+      if (!this.generatedScore) {
+
+        this.topFive(this.currentScore);
+        this.postScore();
+        this.generatedScore = true;
+      }
+
       this.playGame = false;
     }
   }, {
@@ -526,6 +546,7 @@ var Game = function () {
           this.playGame = true;
           this.currentScore = 1;
           this.enemySpeed = 4;
+          this.generatedScore = false;
           this.play();
         }
       }
@@ -570,19 +591,54 @@ var Game = function () {
     key: 'enemySpiritCollision',
     value: function enemySpiritCollision(enemy, spirit) {
       if (enemy && spirit) {
-        debugger;
+        // debugger
         var spiritTime = spirit.x / spirit.speed;
         var enemyTime = enemy.x / enemy.speed + 200;
         if (spiritTime > enemyTime && spirit.y === enemy.y) {
-          debugger;
+          // debugger
           return true;
         }
       }
       return false;
     }
   }, {
-    key: 'pause',
-    value: function pause() {}
+    key: 'topFive',
+    value: function topFive(newScore) {
+      debugger;
+      var added = false;
+      if (!this.top.length) {
+        return this.top = [newScore];
+      }
+      var newTop = this.top;
+      for (var i = 0; i < this.top.length; i++) {
+        if (this.top[i] <= newScore) {
+          newTop = [].concat(_toConsumableArray(this.top.slice(0, i)), [newScore], _toConsumableArray(this.top.slice(i)));
+          this.top = newTop;
+          added = true;
+          break;
+        }
+      }
+      if (!added) {
+        newTop = [].concat(_toConsumableArray(this.top), [newScore]);
+      }
+      while (newTop.length > 5) {
+        newTop.pop();
+      }
+      this.top = newTop;
+    }
+  }, {
+    key: 'postScore',
+    value: function postScore() {
+      // document.getElementById('scores').removeChild('li');
+      for (var i = 0; i < this.top.length; i++) {
+        var li = document.createElement('li');
+        li.className += '' + 'control-instruction-styling';
+        li.setAttribute("id", 'score ' + i);
+        li.innerHTML = this.top[i];
+        document.getElementById('score ' + i).replaceWith(li);
+      }
+      // localStorage['topFive'] = this.top;
+    }
   }]);
 
   return Game;
@@ -595,6 +651,7 @@ var pic4 = "images/download.png";
 var pic5 = "images/PC Computer - Soreyuke Burunyanman Hardcore - Ghost_for_game.png";
 var pic6 = "images/spirit_pixel_removed.png";
 var pic7 = "images/groundfiles/Ground Tiles copy.png";
+var pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
 
 function createImages(pic1, pic2, pic3) {
   var dogImage = new Image();
@@ -607,7 +664,7 @@ function createImages(pic1, pic2, pic3) {
       spiritImage.src = pic6;
       spiritImage.onload = function () {
         var mountFuji = new Image();
-        mountFuji.src = pic3;
+        mountFuji.src = pic8;
         mountFuji.onload = function () {
           var groundImage = new Image();
           groundImage.src = pic7;
@@ -695,6 +752,7 @@ var Score = function () {
     _classCallCheck(this, Score);
 
     this.currentScore = startScore;
+    this.top = [];
   }
 
   _createClass(Score, [{
@@ -708,6 +766,36 @@ var Score = function () {
     key: "score",
     value: function score() {
       this.currentScore;
+    }
+  }, {
+    key: "topFive",
+    value: function topFive(newScore) {
+      var newTop = this.top;
+      for (var i = 0; i < this.top.length; i++) {
+        if (this.top[i] < newScore) {
+          newTop = this.top.slice(0, i) + newScore + this.top.slice(i);
+          while (newTop.length > 5) {
+            newTop.pop();
+          }
+          this.top = newTop;
+          break;
+        }
+      }
+      this.top = newTop;
+    }
+  }, {
+    key: "postScore",
+    value: function postScore() {
+      debugger;
+
+      // document.getElementById('scores').removeChild('li');
+      for (var i = 0; i < this.top.length; i++) {
+        var li = document.createElement('li');
+        li.className += '' + 'control-instruction-styling';
+        li.setAttribute("id", "score " + i);
+        li.innerHTML = this.top[i];
+        document.getElementById("score " + i).replaceWith(li);
+      }
     }
   }]);
 

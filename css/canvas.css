@@ -5,6 +5,8 @@ canvas{
   height: 500px;
   min-width: 600px;
   min-height: 300px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .canavs-background{

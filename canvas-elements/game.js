@@ -21,6 +21,7 @@ class Game{
     this.pauseHandler = this.pauseHandler.bind(this);
     this.enemyGenerator = this.enemyGenerator.bind(this);
     this.play = this.play.bind(this);
+    // this.leaf = this.leaf.bind(this);
     this.count = 0;
     this.currentScore = 1;
     this.playGame = false;
@@ -29,12 +30,15 @@ class Game{
     this.pause = false;
     this.enemy = null;
     this.spirit = null;
+    this.top = [];
+    this.generatedScore = false;
   }
 
   play(enemy, spirit){
     this.count += 1;
     if(!this.playGame && this.currentScore === 1){
-      debugger
+      // debugger
+      // this.leaf()
       // this._ctx.drawImage(this.groundImage, 0, 395, 1000, 110);
       this.count -= 1;
       this.startGame();
@@ -104,7 +108,6 @@ class Game{
   }
 
   enemyGenerator(score){
-
     if(score % 500 > 200){
       this.enemySpeed += .4;
     }
@@ -147,28 +150,36 @@ class Game{
   }
 
   _floor(){
-    this._ctx.drawImage(this.groundImage, 0, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 52, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 104, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 156, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 208, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 260, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 312, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 364, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 406, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 458, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 510, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 562, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 604, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 656, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 708, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 760, 395, 52, 110);
-    this._ctx.drawImage(this.groundImage, 810, 395, 52, 110);
+    let start = 52;
+    for (let i = 0; i < 18; i++) {
+      this._ctx.drawImage(this.groundImage, (start * i), 395, 52, 110);
+    }
+    // this._ctx.drawImage(this.groundImage, 0, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 52, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 104, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 156, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 208, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 260, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 312, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 364, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 406, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 458, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 510, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 562, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 604, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 656, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 708, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 760, 395, 52, 110);
+    // this._ctx.drawImage(this.groundImage, 810, 395, 52, 110);
     // this._ctx.fillStyle = 'rgba(146,98,57,1)';
     // this._ctx.fillRect(0, 400, 1000, 100);
   }
 
   startGame(){
+    // if(localStorage.topFive){
+    //   this.top = localStorage.topFive.split(',');
+    //   this.postScore();
+    // }
     this.generateBackground(this.image);
     this._floor();
     document.addEventListener('keydown', this.KeyDownHandler, false);
@@ -198,6 +209,13 @@ class Game{
     this._ctx.fillText(`to restart the game.`, 280, 155);
     this._ctx.fillText(`Your score was`, 280, 205);
     this._ctx.fillText(`${this.currentScore}`, 360, 245);
+    if(!this.generatedScore){
+
+      this.topFive(this.currentScore);
+      this.postScore();
+      this.generatedScore = true;
+    }
+
     this.playGame = false;
   }
 
@@ -226,6 +244,7 @@ class Game{
         this.playGame = true;
         this.currentScore = 1;
         this.enemySpeed = 4;
+        this.generatedScore = false;
         this.play();
     }
     }
@@ -265,19 +284,51 @@ class Game{
 
   enemySpiritCollision(enemy, spirit){
     if(enemy && spirit){
-      debugger
+      // debugger
       const spiritTime = (spirit.x/spirit.speed);
       const enemyTime = ((enemy.x /enemy.speed) + 200);
       if (spiritTime > enemyTime && spirit.y === enemy.y){
-        debugger
+        // debugger
         return true;
       }
     }
     return false;
   }
 
-  pause(){
+  topFive(newScore){
+    debugger
+    let added = false;
+    if (!this.top.length){
+    return this.top = [newScore];
+    }
+    let newTop = this.top;
+    for (let i = 0; i < this.top.length; i++) {
+      if(this.top[i] <= newScore){
+        newTop = ([...this.top.slice(0,i), newScore, ...this.top.slice(i)]);
+        this.top = newTop;
+        added = true;
+        break;
+      }
+    }
+    if(!added){
+      newTop = [...this.top, newScore];
+    }
+    while(newTop.length > 5){
+      newTop.pop();
+    }
+    this.top = newTop;
+  }
 
+  postScore(){
+    // document.getElementById('scores').removeChild('li');
+    for (let i = 0; i < this.top.length; i++) {
+      let li = document.createElement('li');
+      li.className += '' + 'control-instruction-styling';
+      li.setAttribute("id", `score ${i}`);
+      li.innerHTML = this.top[i];
+      document.getElementById(`score ${i}`).replaceWith(li);
+    }
+    // localStorage['topFive'] = this.top;
   }
 
 
@@ -294,6 +345,7 @@ const pic4 = "images/download.png";
 const pic5 = "images/PC Computer - Soreyuke Burunyanman Hardcore - Ghost_for_game.png";
 const pic6 = "images/spirit_pixel_removed.png";
 const pic7 = "images/groundfiles/Ground Tiles copy.png";
+const pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
 
 
 
@@ -308,7 +360,7 @@ function createImages(pic1, pic2, pic3){
       spiritImage.src = pic6;
       spiritImage.onload = () =>{
         let mountFuji = new Image();
-        mountFuji.src = pic3;
+        mountFuji.src = pic8;
         mountFuji.onload = () => {
           let groundImage = new Image();
           groundImage.src = pic7;

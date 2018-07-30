@@ -319,6 +319,7 @@ var Game = function () {
     this.generatedScore = false;
     this.generatedLeafs = false;
     this.blossoms = [];
+    this.time = 0;
   }
 
   _createClass(Game, [{
@@ -326,10 +327,13 @@ var Game = function () {
     value: function play(enemy, spirit) {
       var _this = this;
 
+      if (this.time === 1000) {
+        this.time = 0;
+        this.enemySpeed += 3;
+      }
       this.count += 1;
       // debugger
       if (!this.playGame && (this.currentScore === null || this.currentScore.score() === 1)) {
-        // this._ctx.drawImage(this.groundImage, 0, 395, 1000, 110);
         this.count -= 1;
         this.startGame();
         requestAnimationFrame(function () {
@@ -345,19 +349,17 @@ var Game = function () {
       } else {
         this._ctx.clearRect(0, 0, 800, 500);
         this.generateBackground(this.image);
-        // this.leafDrawer();
         this._floor();
         if (!enemy) {
+          debugger;
           enemy = this.enemyGenerator(this.currentScore.score());
           if (spirit) {
             if (this.enemySpiritCollision(enemy, spirit)) {
+              debugger;
               enemy = null;
             } else {
               enemy.draw(this._ctx);
             }
-          }
-          if (enemy) {
-            enemy.draw(this._ctx);
           }
         } else {
           enemy.draw(this._ctx);
@@ -367,24 +369,23 @@ var Game = function () {
           spirit = null;
         } else if (!spirit) {
           spirit = this.spiritGenerator(this.currentScore.score());
-          if (spirit) {
-            if (this.enemySpiritCollision(enemy, spirit)) {
-              spirit = null;
-            } else {
-              spirit.draw(this._ctx);
-            }
-          }
+          // if (spirit){
+          //   if(this.enemySpiritCollision(enemy, spirit)){
+          //     debugger
+          //     spirit = null;
+          //   }else{
+          // }
+          spirit.draw(this._ctx);
+          // }
         } else {
           spirit.draw(this._ctx);
         }
-        if (enemy) {
-          if (enemy.collision(enemy, this.dog)) {
-            this.restartGame(enemy, spirit);
-            requestAnimationFrame(function () {
-              _this.play(enemy, spirit);
-            });
-          }
-        }
+        // if(enemy){
+        //   if(enemy.collision(enemy, this.dog)){
+        //     this.restartGame(enemy, spirit);
+        //     requestAnimationFrame(() => {this.play(enemy, spirit);});
+        //   }
+        // }
         if (spirit) {
           if (spirit.collision(spirit, this.dog)) {
             spirit = this.removeSpirit(spirit, enemy);
@@ -393,11 +394,14 @@ var Game = function () {
           }
         }
         this.currentScore.updateScore(1);
-        enemy = this.removeEnemy(enemy);
+        if (enemy) {
+          enemy = this.removeEnemy(enemy);
+        }
         this.dog.draw(this._ctx);
         this.drawScore(this._ctx);
         this.enemy = enemy;
         this.spirit = spirit;
+        this.time += 1;
         requestAnimationFrame(function () {
           _this.play(enemy, spirit);
         });
@@ -406,9 +410,9 @@ var Game = function () {
   }, {
     key: 'enemyGenerator',
     value: function enemyGenerator(score) {
-      if (score % 500 > 200) {
-        this.enemySpeed += .4;
-      }
+      // if(score % 500 > 200){
+      //   this.enemySpeed += .4;
+      // }
       if (score % 600 > 400) {
         this.enemyheight = 275;
       } else {
@@ -567,9 +571,6 @@ var Game = function () {
         this.count = 0;
         return null;
       }
-      // if(spirit.y === enemy.y && this.enemySpiritCollision(enemy, spirit)){
-      //   return null;
-      // }
       if (spirit.spiritPos()[0] < -95) {
         return null;
       } else {
@@ -579,41 +580,16 @@ var Game = function () {
   }, {
     key: 'enemySpiritCollision',
     value: function enemySpiritCollision(enemy, spirit) {
+      if (spirit.y === enemy.y) {}
       if (enemy && spirit) {
-        // debugger
-        var spiritTime = spirit.x / spirit.speed;
-        var enemyTime = enemy.x / enemy.speed + 200;
-        if (spiritTime > enemyTime && spirit.y === enemy.y) {
-          // debugger
+        var spiritTime = (spirit.x - 75) / spirit.speed;
+        var enemyTime = (enemy.x - 75) / enemy.speed;
+        if (spiritTime + 30 > enemyTime && spirit.y === enemy.y) {
+          debugger;
           return true;
         }
       }
       return false;
-    }
-  }, {
-    key: 'usernameHandler',
-    value: function usernameHandler(e) {
-      switch (e.keycode) {
-        case 81:
-          this.username.push('q');
-          break;
-        case 87:
-          this.username.push('w');
-          break;
-        case 69:
-          this.username.push('e');
-          break;
-        case 82:
-          this.username.push('r');
-          break;
-        default:
-
-      }
-    }
-  }, {
-    key: 'username',
-    value: function username() {
-      document.addEventListener('keydown', this.usernameHandler, false);
     }
   }, {
     key: 'leafGenerator',

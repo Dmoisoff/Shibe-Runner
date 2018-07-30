@@ -277,7 +277,7 @@ class Game{
   }
 
   topFive(newScore){
-    debugger
+    // debugger
     let added = false;
     if (!this.top.length){
     return this.top = [newScore];

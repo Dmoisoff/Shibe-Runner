@@ -585,7 +585,7 @@ var Game = function () {
   }, {
     key: 'topFive',
     value: function topFive(newScore) {
-      debugger;
+      // debugger
       var added = false;
       if (!this.top.length) {
         return this.top = [newScore];
@@ -767,7 +767,7 @@ var Score = function () {
   }, {
     key: "postScore",
     value: function postScore() {
-      debugger;
+      // debugger
 
       // document.getElementById('scores').removeChild('li');
       for (var i = 0; i < this.top.length; i++) {

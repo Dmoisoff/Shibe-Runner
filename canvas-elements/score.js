@@ -30,7 +30,7 @@ class Score{
   }
 
   postScore(){
-    debugger
+    // debugger
 
     // document.getElementById('scores').removeChild('li');
     for (let i = 0; i < this.top.length; i++) {

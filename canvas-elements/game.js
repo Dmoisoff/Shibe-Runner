@@ -198,7 +198,7 @@ class Game{
     document.addEventListener('keydown', this.KeyDownHandler, false);
     document.addEventListener('keydown', this.pauseHandler, false);
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
-    this._ctx.fillRect(150, 75, 500, 300);
+    this._ctx.fillRect(200, 75, 500, 300);
     // this._ctx.font = "32px Shojumaru, cursive";
     // this._ctx.font = "32px Unica One, cursive;";
     this._ctx.font = "32px Goudy Bookletter 1911, serif;";
@@ -220,7 +220,7 @@ class Game{
       spirit.draw(this._ctx);
     }
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
-    this._ctx.fillRect(150, 75, 500, 300);
+    this._ctx.fillRect(200, 75, 500, 300);
     // this._ctx.font = "32px Shojumaru, cursive";
     // this._ctx.font = "32px Unica One, cursive;";
     this._ctx.font = "32px Goudy Bookletter 1911, serif;";
@@ -252,7 +252,7 @@ class Game{
       spirit.draw(this._ctx);
     }
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
-    this._ctx.fillRect(150, 75, 500, 300);
+    this._ctx.fillRect(200, 75, 500, 300);
     // this._ctx.font = "32px Arial";
     // this._ctx.font = "32px Unica One, cursive;";
     this._ctx.font = "32px Goudy Bookletter 1911, serif;";

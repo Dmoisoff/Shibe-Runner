@@ -2,7 +2,7 @@
 class Dog{
   constructor(image){
     this.xPos = 75;
-    this.yPos = 335;
+    this.yPos = 350;
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.KeyUpHandler = this.KeyUpHandler.bind(this);
     this.arcUp = this.arcUp.bind(this);
@@ -16,6 +16,7 @@ class Dog{
     this.inAir = false;
     this.count = 0;
     this.movementRate = 1;
+    this.spriteSpeed = 1;
   }
 
   KeyUpHandler(e){
@@ -41,7 +42,7 @@ class Dog{
 
   arcUp(value){
     if(value < 255){
-      return(3);
+      return(2);
     // }else if(value < 300){
     //   return(3);
     }else{
@@ -55,7 +56,7 @@ class Dog{
     // }else if(value < 325){
     //   return(3);
     }else{
-      return(5);
+      return(4);
     }
   }
 
@@ -75,19 +76,20 @@ class Dog{
     }
     if(this.inAir){
       this.yPos += this.arcDown(this.yPos);
-      if(this.yPos >= 335){
+      if(this.yPos >= 348){
         this.inAir = false;
       }
     }
-    this.subIndex += this.movementRate;
+    this.subIndex += this.spriteSpeed;
     if( this.subIndex >= 10 ){
       this.index = (this.index + 1) % 5;
       this.subIndex = 0;
     }
     this.count += 1;
-    if (this.count === 5000 ) {
+    if (this.count === 1000 ) {
       this.movementRate += 5;
       this.count = 1;
+      this.spriteSpeed += .5;
     }
   }
 }

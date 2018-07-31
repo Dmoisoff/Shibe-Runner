@@ -105,7 +105,7 @@ var Dog = function () {
     _classCallCheck(this, Dog);
 
     this.xPos = 75;
-    this.yPos = 335;
+    this.yPos = 350;
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.KeyUpHandler = this.KeyUpHandler.bind(this);
     this.arcUp = this.arcUp.bind(this);
@@ -119,6 +119,7 @@ var Dog = function () {
     this.inAir = false;
     this.count = 0;
     this.movementRate = 1;
+    this.spriteSpeed = 1;
   }
 
   _createClass(Dog, [{
@@ -147,7 +148,7 @@ var Dog = function () {
     key: 'arcUp',
     value: function arcUp(value) {
       if (value < 255) {
-        return 3;
+        return 2;
         // }else if(value < 300){
         //   return(3);
       } else {
@@ -162,7 +163,7 @@ var Dog = function () {
         // }else if(value < 325){
         //   return(3);
       } else {
-        return 5;
+        return 4;
       }
     }
   }, {
@@ -182,19 +183,20 @@ var Dog = function () {
       }
       if (this.inAir) {
         this.yPos += this.arcDown(this.yPos);
-        if (this.yPos >= 335) {
+        if (this.yPos >= 348) {
           this.inAir = false;
         }
       }
-      this.subIndex += this.movementRate;
+      this.subIndex += this.spriteSpeed;
       if (this.subIndex >= 10) {
         this.index = (this.index + 1) % 5;
         this.subIndex = 0;
       }
       this.count += 1;
-      if (this.count === 5000) {
+      if (this.count === 1000) {
         this.movementRate += 5;
         this.count = 1;
+        this.spriteSpeed += .5;
       }
     }
   }]);
@@ -247,7 +249,7 @@ var Enemy = function () {
   }, {
     key: "collision",
     value: function collision(enemy, dog) {
-      if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 135 && dog.dogPosition()[1] >= 325 && enemy.enemyPos()[1] === 335) {
+      if (enemy.enemyPos()[0] > 10 && enemy.enemyPos()[0] < 150 && dog.dogPosition()[1] >= 325 && enemy.enemyPos()[1] === 335) {
         return true;
       } else if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] <= 300 && enemy.enemyPos()[1] === 275) {
         return true;
@@ -291,6 +293,7 @@ var Game = function () {
     _classCallCheck(this, Game);
 
     this.dog = new Dog(dogImage);
+    this.dogImage = dogImage;
     this.enemyImage = enemyImage;
     this.spiritImage = spiritImage;
     this.groundImage = groundImage;
@@ -314,7 +317,7 @@ var Game = function () {
     this.count = 0;
     this.currentScore = null;
     this.playGame = false;
-    this.enemySpeed = 10;
+    this.enemySpeed = 13;
     this.enemyheight = 335;
     this.pause = false;
     this.enemy = null;
@@ -354,6 +357,10 @@ var Game = function () {
         this.count -= 1;
         this.pauseGame(enemy, spirit);
       } else {
+        if (!this.generatedTrees) {
+          this.treeGenerator();
+          this.dog = new Dog(this.dogImage);
+        }
         this._ctx.clearRect(0, 0, 900, 500);
         this.generateBackground(this.image);
         this._floor();
@@ -373,7 +380,7 @@ var Game = function () {
           enemy.draw(this._ctx);
         }
 
-        if (!spirit && this.count < Math.floor(Math.random() * 31) + 50) {
+        if (!spirit && this.count < Math.floor(Math.random() * 21) + 80) {
           spirit = null;
         } else if (!spirit) {
           spirit = this.spiritGenerator(this.currentScore.score());
@@ -505,6 +512,7 @@ var Game = function () {
       this.generateBackground(this.image);
       // this.leafDrawer();
       this._floor();
+      this.generatedTrees = false;
       this.drawTrees(this.ctx);
       enemy.draw(this._ctx);
       this.dog.draw(this._ctx);
@@ -639,6 +647,7 @@ var Game = function () {
     key: 'treeGenerator',
     value: function treeGenerator() {
       if (!this.generatedTrees) {
+        this.trees = [];
         var x = 500;
         for (var i = 0; i < 3; i++) {
           debugger;
@@ -675,6 +684,7 @@ var pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
 var pic9 = "images/cherry_blossems_sprites.png";
 var pic10 = "images/kisspng-sprite-desktop-wallpaper-fruit-tree-fir-tree-5ace4a93d182a1.6415131015234689478582.png";
 var pic11 = "images/fuji.gif";
+var pic12 = "images/Hexen-Spirit copy_white.png";
 
 function createImages(pic1, pic2, pic3) {
   var dogImage = new Image();
@@ -1126,7 +1136,7 @@ var Tree = function () {
   _createClass(Tree, [{
     key: "draw",
     value: function draw(ctx) {
-      ctx.drawImage(this.treeImage, this.index * 270, 747, 275, 350, this.xPos, 220, 380, 270);
+      ctx.drawImage(this.treeImage, this.index * 270, 747, 275, 350, this.xPos, 220, 200, 270);
       this.xPos -= this.dx;
 
       this.subIndex += this.movementRate;
@@ -1155,7 +1165,8 @@ var Tree = function () {
 
       this.count += 1;
       if (this.count === 1000) {
-        this.movementRate += 5;
+        this.movementRate += 1;
+        this.dx += this.movementRate / 2;
         this.count = 1;
       }
 

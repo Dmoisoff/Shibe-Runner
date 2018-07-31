@@ -9,6 +9,7 @@ const Tree = require('./tree');
 class Game{
   constructor(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage){
     this.dog = new Dog(dogImage);
+    this.dogImage = dogImage;
     this.enemyImage = enemyImage;
     this.spiritImage = spiritImage;
     this.groundImage = groundImage;
@@ -32,7 +33,7 @@ class Game{
     this.count = 0;
     this.currentScore = null;
     this.playGame = false;
-    this.enemySpeed = 10;
+    this.enemySpeed = 13;
     this.enemyheight = 335;
     this.pause = false;
     this.enemy = null;
@@ -66,6 +67,10 @@ class Game{
       this.count -= 1;
       this.pauseGame(enemy,spirit);
     }else{
+      if(!this.generatedTrees){
+        this.treeGenerator();
+        this.dog = new Dog(this.dogImage);
+      }
       this._ctx.clearRect(0,0,900,500);
       this.generateBackground(this.image);
       this._floor();
@@ -85,7 +90,7 @@ class Game{
           enemy.draw(this._ctx);
         }
 
-        if(!spirit && this.count < Math.floor(Math.random() * 31) + 50){
+        if(!spirit && this.count < Math.floor(Math.random() * 21) + 80){
           spirit = null;
         }else if(!spirit){
           spirit = this.spiritGenerator(this.currentScore.score());
@@ -207,6 +212,7 @@ class Game{
     this.generateBackground(this.image);
     // this.leafDrawer();
     this._floor();
+    this.generatedTrees = false;
     this.drawTrees(this.ctx);
     enemy.draw(this._ctx);
     this.dog.draw(this._ctx);
@@ -331,6 +337,7 @@ class Game{
 
   treeGenerator(){
     if (!this.generatedTrees) {
+      this.trees = [];
       let x = 500;
       for (let i = 0; i < 3; i++) {
         debugger
@@ -366,6 +373,7 @@ const pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
 const pic9 = "images/cherry_blossems_sprites.png";
 const pic10 = "images/kisspng-sprite-desktop-wallpaper-fruit-tree-fir-tree-5ace4a93d182a1.6415131015234689478582.png";
 const pic11 = "images/fuji.gif";
+const pic12 = "images/Hexen-Spirit copy_white.png";
 
 
 function createImages(pic1, pic2, pic3){

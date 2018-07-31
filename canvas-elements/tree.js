@@ -14,7 +14,7 @@ class Tree{
 // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 500, 220, 380, 270);
 // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 0, 220, 380, 270);
   draw(ctx){
-    ctx.drawImage(this.treeImage, (this.index * 270), 747, 275, 350, this.xPos, 220, 380, 270);
+    ctx.drawImage(this.treeImage, (this.index * 270), 747, 275, 350, this.xPos, 220, 200, 270);
     this.xPos -= this.dx;
 
     this.subIndex += this.movementRate;
@@ -43,7 +43,8 @@ class Tree{
 
     this.count += 1;
     if (this.count === 1000 ) {
-      this.movementRate += 5;
+      this.movementRate += 1;
+      this.dx += (this.movementRate / 2);
       this.count = 1;
     }
 

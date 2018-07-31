@@ -305,13 +305,14 @@ var Game = function () {
     this._height = height;
     this.image = mountFuji;
     this._ctx = canvas.getContext('2d');
-    this._floor = this._floor.bind(this);
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.pauseHandler = this.pauseHandler.bind(this);
     this.enemyGenerator = this.enemyGenerator.bind(this);
     this.play = this.play.bind(this);
     this.leafGenerator = this.leafGenerator.bind(this);
     this.treeGenerator = this.treeGenerator.bind(this);
+    this.groundGenerator = this.groundGenerator.bind(this);
+    this.drawGround = this.drawGround.bind(this);
     this.leafDrawer = this.leafDrawer.bind(this);
     this.drawTrees = this.drawTrees.bind(this);
     this.count = 0;
@@ -326,6 +327,7 @@ var Game = function () {
     this.generatedScore = false;
     this.generatedLeafs = false;
     this.generatedTrees = false;
+    this.generatedground = false;
     this.blossoms = [];
     this.trees = [];
     this.time = 0;
@@ -337,13 +339,12 @@ var Game = function () {
     value: function play(enemy, spirit) {
       var _this = this;
 
-      debugger;
       if (this.time === 1000) {
+        debugger;
         this.time = 0;
         this.enemySpeed += 3;
       }
       this.count += 1;
-      // debugger
       if (!this.playGame && (this.currentScore === null || this.currentScore.score() === 1)) {
         this.count -= 1;
         this.startGame();
@@ -359,19 +360,20 @@ var Game = function () {
         this.pauseGame(enemy, spirit);
       } else {
         if (!this.generatedTrees) {
+          // debugger
           this.treeGenerator();
+          this.groundGenerator();
           this.dog = new Dog(this.dogImage);
         }
         this._ctx.clearRect(0, 0, 900, 500);
         // this.generateBackground(this.image);
-        this._floor();
-        this.drawTrees(this.ctx);
+        // this._floor();
+        this.drawGround(this._ctx);
+        this.drawTrees(this._ctx);
         if (!enemy) {
-          debugger;
           enemy = this.enemyGenerator(this.currentScore.score());
           if (spirit) {
             if (this.enemySpiritCollision(enemy, spirit)) {
-              debugger;
               enemy = null;
             } else {
               enemy.draw(this._ctx);
@@ -387,7 +389,6 @@ var Game = function () {
           spirit = this.spiritGenerator(this.currentScore.score());
           // if (spirit){
           //   if(this.enemySpiritCollision(enemy, spirit)){
-          //     debugger
           //     spirit = null;
           //   }else{
           // }
@@ -470,14 +471,14 @@ var Game = function () {
       this._ctx.rect(0, 0, this._width, this._height);
       this._ctx.stroke();
     }
-  }, {
-    key: '_floor',
-    value: function _floor() {
-      var start = 52;
-      for (var i = 0; i < 18; i++) {
-        this._ctx.drawImage(this.groundImage, start * i, 395, 52, 110);
-      }
-    }
+
+    // _floor(){
+    //   let start = 52;
+    //   for (let i = 0; i < 18; i++) {
+    //     this._ctx.drawImage(this.groundImage, (start * i), 395, 52, 110);
+    //   }
+    // }
+
   }, {
     key: 'startGame',
     value: function startGame() {
@@ -487,12 +488,13 @@ var Game = function () {
       // }
       this.currentScore = new Score(1, this.top);
       this._ctx.clearRect(0, 0, 900, 500);
-      // this.generateBackground(this.image);
-      this.leafGenerator();
       debugger;
-      this.leafDrawer();
-      this._floor();
+      this.groundGenerator();
       this.treeGenerator();
+      // this.generateBackground(this.image);
+      // this.leafGenerator();
+      // this.leafDrawer();
+      // this._floor();
       // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 0, 220, 380, 270);
       // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 500, 220, 380, 270);
       document.addEventListener('keydown', this.KeyDownHandler, false);
@@ -512,8 +514,10 @@ var Game = function () {
       this._ctx.clearRect(0, 0, 900, 500);
       // this.generateBackground(this.image);
       // this.leafDrawer();
-      this._floor();
+      // this._floor();
+      this.drawGround(this.ctx);
       this.generatedTrees = false;
+      this.generatedground = false;
       this.drawTrees(this.ctx);
       enemy.draw(this._ctx);
       this.dog.draw(this._ctx);
@@ -546,7 +550,8 @@ var Game = function () {
     value: function pauseGame(enemy, spirit) {
       this._ctx.clearRect(0, 0, 800, 500);
       // this.generateBackground(this.image);
-      this._floor();
+      // this._floor();
+      this.drawGround(this._ctx);
       this.drawTrees(this.ctx);
       enemy.draw(this._ctx);
       this.dog.draw(this._ctx);
@@ -619,7 +624,6 @@ var Game = function () {
         var spiritTime = (spirit.x - 75) / spirit.speed;
         var enemyTime = (enemy.x - 75) / enemy.speed;
         if (spiritTime + 30 > enemyTime && spirit.y === enemy.y) {
-          debugger;
           return true;
         }
       }
@@ -651,7 +655,6 @@ var Game = function () {
         this.trees = [];
         var x = 500;
         for (var i = 0; i < 3; i++) {
-          debugger;
           var tree = new Tree(this.treeImage, x * i, this.environmentSpeed);
           tree.draw(this._ctx);
           this.trees.push(tree);
@@ -664,9 +667,31 @@ var Game = function () {
     value: function drawTrees(ctx) {
       var _this3 = this;
 
-      debugger;
       this.trees.forEach(function (tree) {
         tree.draw(_this3._ctx);
+      });
+    }
+  }, {
+    key: 'groundGenerator',
+    value: function groundGenerator() {
+      if (!this.generatedground) {
+        this.grounds = [];
+        var x = 52;
+        for (var i = 0; i < 50; i++) {
+          var ground = new Ground(this.groundImage, x * i, this.environmentSpeed);
+          ground.draw(this._ctx);
+          this.grounds.push(ground);
+        }
+      }
+      this.generatedground = true;
+    }
+  }, {
+    key: 'drawGround',
+    value: function drawGround(ctx) {
+      var _this4 = this;
+
+      this.grounds.forEach(function (ground) {
+        ground.draw(_this4._ctx);
       });
     }
   }]);
@@ -688,7 +713,6 @@ var pic11 = "images/fuji.gif";
 var pic12 = "images/Hexen-Spirit copy_white.png";
 
 function createImages(pic1, pic2, pic3) {
-  debugger;
   var dogImage = new Image();
   dogImage.src = pic1;
   dogImage.onload = function () {
@@ -745,32 +769,39 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Ground = function () {
-  function Ground(image) {
+  function Ground(image, x, speed) {
     _classCallCheck(this, Ground);
 
-    this.image = image;
+    this.xPos = x;
+    this.groundImage = image;
+    this.dx = speed;
+    this.index = 0;
+    this.subIndex = 0;
+    this.count = 0;
+    this.movementRate = speed;
   }
 
   _createClass(Ground, [{
     key: "draw",
-    value: function draw(_ctx) {
-      // this._ctx.drawImage(this.groundImage, 0, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 52, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 104, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 156, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 208, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 260, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 312, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 364, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 406, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 458, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 510, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 562, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 604, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 656, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 708, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 760, 395, 52, 110);
-      // this._ctx.drawImage(this.groundImage, 810, 395, 52, 110);
+    value: function draw(ctx) {
+      ctx.drawImage(this.groundImage, this.xPos, 395, 52, 110);
+      this.xPos -= this.dx;
+
+      // this.subIndex += this.movementRate;
+      //   this.index = (this.index + 1) % 15;
+      //   this.subIndex = 0;
+
+      this.count += 1;
+      if (this.count === 1000) {
+        debugger;
+        this.movementRate += 1;
+        this.dx += this.movementRate / 2;
+        this.count = 1;
+      }
+
+      if (this.xPos < 0 - 100) {
+        this.xPos = 1000 + (this.xPos + 100);
+      }
     }
   }]);
 
@@ -1172,6 +1203,7 @@ var Tree = function () {
 
       this.count += 1;
       if (this.count === 1000) {
+        debugger;
         this.movementRate += 1;
         this.dx += this.movementRate / 2;
         this.count = 1;

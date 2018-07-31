@@ -21,13 +21,14 @@ class Game{
     this._height = height;
     this.image = mountFuji;
     this._ctx = canvas.getContext('2d');
-    this._floor = this._floor.bind(this);
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.pauseHandler = this.pauseHandler.bind(this);
     this.enemyGenerator = this.enemyGenerator.bind(this);
     this.play = this.play.bind(this);
     this.leafGenerator = this.leafGenerator.bind(this);
     this.treeGenerator = this.treeGenerator.bind(this);
+    this.groundGenerator = this.groundGenerator.bind(this);
+    this.drawGround = this.drawGround.bind(this);
     this.leafDrawer = this.leafDrawer.bind(this);
     this.drawTrees = this.drawTrees.bind(this);
     this.count = 0;
@@ -42,6 +43,7 @@ class Game{
     this.generatedScore = false;
     this.generatedLeafs = false;
     this.generatedTrees = false;
+    this.generatedground = false;
     this.blossoms = [];
     this.trees = [];
     this.time = 0;
@@ -49,13 +51,12 @@ class Game{
   }
 
   play(enemy, spirit){
-    debugger
     if(this.time === 1000){
+      debugger
       this.time = 0;
       this.enemySpeed += 3;
     }
     this.count += 1;
-    // debugger
     if(!this.playGame && (this.currentScore === null || this.currentScore.score() === 1)){
       this.count -= 1;
       this.startGame();
@@ -69,19 +70,20 @@ class Game{
       this.pauseGame(enemy,spirit);
     }else{
       if(!this.generatedTrees){
+        // debugger
         this.treeGenerator();
+        this.groundGenerator();
         this.dog = new Dog(this.dogImage);
       }
       this._ctx.clearRect(0,0,900,500);
       // this.generateBackground(this.image);
-      this._floor();
-      this.drawTrees(this.ctx);
+      // this._floor();
+      this.drawGround(this._ctx);
+      this.drawTrees(this._ctx);
         if(!enemy){
-          debugger
           enemy = this.enemyGenerator(this.currentScore.score());
           if (spirit){
             if(this.enemySpiritCollision(enemy, spirit)){
-              debugger
               enemy = null;
             }else{
               enemy.draw(this._ctx);
@@ -97,7 +99,6 @@ class Game{
           spirit = this.spiritGenerator(this.currentScore.score());
           // if (spirit){
           //   if(this.enemySpiritCollision(enemy, spirit)){
-          //     debugger
           //     spirit = null;
           //   }else{
             // }
@@ -174,12 +175,12 @@ class Game{
     this._ctx.stroke();
   }
 
-  _floor(){
-    let start = 52;
-    for (let i = 0; i < 18; i++) {
-      this._ctx.drawImage(this.groundImage, (start * i), 395, 52, 110);
-    }
-  }
+  // _floor(){
+  //   let start = 52;
+  //   for (let i = 0; i < 18; i++) {
+  //     this._ctx.drawImage(this.groundImage, (start * i), 395, 52, 110);
+  //   }
+  // }
 
   startGame(){
     // if(localStorage.topFive){
@@ -188,12 +189,13 @@ class Game{
     // }
     this.currentScore = new Score(1, this.top);
     this._ctx.clearRect(0,0,900,500);
-    // this.generateBackground(this.image);
-    this.leafGenerator();
     debugger
-    this.leafDrawer();
-    this._floor();
+    this.groundGenerator();
     this.treeGenerator();
+    // this.generateBackground(this.image);
+    // this.leafGenerator();
+    // this.leafDrawer();
+    // this._floor();
     // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 0, 220, 380, 270);
     // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 500, 220, 380, 270);
     document.addEventListener('keydown', this.KeyDownHandler, false);
@@ -212,8 +214,10 @@ class Game{
     this._ctx.clearRect(0,0,900,500);
     // this.generateBackground(this.image);
     // this.leafDrawer();
-    this._floor();
+    // this._floor();
+    this.drawGround(this.ctx);
     this.generatedTrees = false;
+    this.generatedground = false;
     this.drawTrees(this.ctx);
     enemy.draw(this._ctx);
     this.dog.draw(this._ctx);
@@ -245,7 +249,8 @@ class Game{
   pauseGame(enemy,spirit){
     this._ctx.clearRect(0,0,800,500);
     // this.generateBackground(this.image);
-    this._floor();
+    // this._floor();
+    this.drawGround(this._ctx);
     this.drawTrees(this.ctx);
     enemy.draw(this._ctx);
     this.dog.draw(this._ctx);
@@ -312,7 +317,6 @@ class Game{
       const spiritTime = ((spirit.x - 75)/spirit.speed);
       const enemyTime = ((enemy.x - 75) /enemy.speed);
       if ((spiritTime + 30) > enemyTime && spirit.y === enemy.y){
-        debugger
         return true;
       }
     }
@@ -341,7 +345,6 @@ class Game{
       this.trees = [];
       let x = 500;
       for (let i = 0; i < 3; i++) {
-        debugger
         const tree = new Tree(this.treeImage, (x * i), this.environmentSpeed);
         tree.draw(this._ctx);
         this.trees.push(tree);
@@ -351,9 +354,27 @@ class Game{
   }
 
   drawTrees(ctx){
-    debugger
     this.trees.forEach((tree) => {
       tree.draw(this._ctx);
+    });
+  }
+
+  groundGenerator(){
+    if (!this.generatedground) {
+      this.grounds = [];
+      let x = 52;
+      for (let i = 0; i < 50; i++) {
+        const ground = new Ground(this.groundImage, (x * i), this.environmentSpeed);
+        ground.draw(this._ctx);
+        this.grounds.push(ground);
+      }
+    }
+    this.generatedground = true;
+  }
+
+  drawGround(ctx){
+    this.grounds.forEach((ground) => {
+      ground.draw(this._ctx);
     });
   }
 
@@ -378,7 +399,6 @@ const pic12 = "images/Hexen-Spirit copy_white.png";
 
 
 function createImages(pic1, pic2, pic3){
-  debugger
   let dogImage = new Image();
   dogImage.src = pic1;
   dogImage.onload = () => {

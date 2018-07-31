@@ -86,7 +86,7 @@ class Dog{
     }
     this.count += 1;
     if (this.count === 1000 ) {
-      this.movementRate += .5;
+      this.movementRate += 1;
       this.count = 1;
     }
   }

@@ -193,7 +193,7 @@ var Dog = function () {
       }
       this.count += 1;
       if (this.count === 1000) {
-        this.movementRate += .5;
+        this.movementRate += 1;
         this.count = 1;
       }
     }
@@ -284,9 +284,10 @@ var Spirit = __webpack_require__(/*! ./spirit */ "./canvas-elements/spirit.js");
 var Ground = __webpack_require__(/*! ./ground */ "./canvas-elements/ground.js");
 var Score = __webpack_require__(/*! ./score */ "./canvas-elements/score.js");
 var Leaf = __webpack_require__(/*! ./leaf */ "./canvas-elements/leaf.js");
+var Tree = __webpack_require__(/*! ./tree */ "./canvas-elements/tree.js");
 
 var Game = function () {
-  function Game(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems) {
+  function Game(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage) {
     _classCallCheck(this, Game);
 
     this.dog = new Dog(dogImage);
@@ -294,6 +295,7 @@ var Game = function () {
     this.spiritImage = spiritImage;
     this.groundImage = groundImage;
     this.cherryBlossems = cherryBlossems;
+    this.treeImage = treeImage;
     canvas.width = width;
     canvas.height = height;
     this._width = width;
@@ -306,11 +308,13 @@ var Game = function () {
     this.enemyGenerator = this.enemyGenerator.bind(this);
     this.play = this.play.bind(this);
     this.leafGenerator = this.leafGenerator.bind(this);
+    this.treeGenerator = this.treeGenerator.bind(this);
     this.leafDrawer = this.leafDrawer.bind(this);
+    this.drawTrees = this.drawTrees.bind(this);
     this.count = 0;
     this.currentScore = null;
     this.playGame = false;
-    this.enemySpeed = 4;
+    this.enemySpeed = 10;
     this.enemyheight = 335;
     this.pause = false;
     this.enemy = null;
@@ -318,7 +322,9 @@ var Game = function () {
     this.top = [];
     this.generatedScore = false;
     this.generatedLeafs = false;
+    this.generatedTrees = false;
     this.blossoms = [];
+    this.trees = [];
     this.time = 0;
   }
 
@@ -350,6 +356,7 @@ var Game = function () {
         this._ctx.clearRect(0, 0, 800, 500);
         this.generateBackground(this.image);
         this._floor();
+        this.drawTrees(this.ctx);
         if (!enemy) {
           debugger;
           enemy = this.enemyGenerator(this.currentScore.score());
@@ -380,12 +387,14 @@ var Game = function () {
         } else {
           spirit.draw(this._ctx);
         }
-        // if(enemy){
-        //   if(enemy.collision(enemy, this.dog)){
-        //     this.restartGame(enemy, spirit);
-        //     requestAnimationFrame(() => {this.play(enemy, spirit);});
-        //   }
-        // }
+        if (enemy) {
+          if (enemy.collision(enemy, this.dog)) {
+            this.restartGame(enemy, spirit);
+            requestAnimationFrame(function () {
+              _this.play(enemy, spirit);
+            });
+          }
+        }
         if (spirit) {
           if (spirit.collision(spirit, this.dog)) {
             spirit = this.removeSpirit(spirit, enemy);
@@ -471,8 +480,12 @@ var Game = function () {
       this._ctx.clearRect(0, 0, 800, 500);
       this.generateBackground(this.image);
       this.leafGenerator();
+      debugger;
       // this.leafDrawer();
       this._floor();
+      this.treeGenerator();
+      // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 0, 220, 380, 270);
+      // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 500, 220, 380, 270);
       document.addEventListener('keydown', this.KeyDownHandler, false);
       document.addEventListener('keydown', this.pauseHandler, false);
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
@@ -502,6 +515,8 @@ var Game = function () {
       this._ctx.fillText('to restart the game.', 195, 155);
       this._ctx.fillText('Your score was', 220, 205);
       this._ctx.fillText('' + (this.currentScore.score() - 1), 370, 245);
+      // this._ctx.font = "28px Shojumaru, cursive";
+      // this._ctx.fillText(`Please enter your name`, 180, 285);
       if (!this.generatedScore) {
 
         this.currentScore.topFive(this.currentScore.score());
@@ -580,7 +595,8 @@ var Game = function () {
   }, {
     key: 'enemySpiritCollision',
     value: function enemySpiritCollision(enemy, spirit) {
-      if (spirit.y === enemy.y) {}
+      // if(spirit.y === enemy.y){
+      // }
       if (enemy && spirit) {
         var spiritTime = (spirit.x - 75) / spirit.speed;
         var enemyTime = (enemy.x - 75) / enemy.speed;
@@ -610,6 +626,30 @@ var Game = function () {
         leaf.draw(_this2._ctx);
       });
     }
+  }, {
+    key: 'treeGenerator',
+    value: function treeGenerator() {
+      if (!this.generatedTrees) {
+        var x = 500;
+        for (var i = 0; i < 2; i++) {
+          debugger;
+          var tree = new Tree(this.treeImage, x * i, this.enemySpeed);
+          tree.draw(this._ctx);
+          this.trees.push(tree);
+        }
+      }
+      this.generatedTrees = true;
+    }
+  }, {
+    key: 'drawTrees',
+    value: function drawTrees(ctx) {
+      var _this3 = this;
+
+      debugger;
+      this.trees.forEach(function (tree) {
+        tree.draw(_this3.ctx);
+      });
+    }
   }]);
 
   return Game;
@@ -624,6 +664,7 @@ var pic6 = "images/spirit_pixel_removed.png";
 var pic7 = "images/groundfiles/Ground Tiles copy.png";
 var pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
 var pic9 = "images/cherry_blossems_sprites.png";
+var pic10 = "images/kisspng-sprite-desktop-wallpaper-fruit-tree-fir-tree-5ace4a93d182a1.6415131015234689478582.png";
 
 function createImages(pic1, pic2, pic3) {
   var dogImage = new Image();
@@ -644,8 +685,12 @@ function createImages(pic1, pic2, pic3) {
             var groundImage = new Image();
             groundImage.src = pic7;
             groundImage.onload = function () {
-              var game = new Game(document.getElementById('canvas'), 800, 500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems);
-              game.play();
+              var treeImage = new Image();
+              treeImage.src = pic10;
+              treeImage.onload = function () {
+                var game = new Game(document.getElementById('canvas'), 800, 500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage);
+                game.play();
+              };
             };
           };
         };
@@ -1032,6 +1077,67 @@ var Spirit = function () {
 }();
 
 module.exports = Spirit;
+
+/***/ }),
+
+/***/ "./canvas-elements/tree.js":
+/*!*********************************!*\
+  !*** ./canvas-elements/tree.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Tree = function () {
+  function Tree(image, x, speed) {
+    _classCallCheck(this, Tree);
+
+    this.xPos = x;
+    this.treeImage = image;
+    this.dx = speed;
+    this.index = 0;
+    this.subIndex = 0;
+    this.count = 0;
+    this.movementRate = speed;
+  }
+
+  // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 500, 220, 380, 270);
+  // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 0, 220, 380, 270);
+
+
+  _createClass(Tree, [{
+    key: "draw",
+    value: function draw(ctx) {
+      ctx.drawImage(this.treeImage, 0, 747, 275, 350, this.xPos, 220, 380, 270);
+      this.xPos -= this.dx;
+
+      this.subIndex += this.movementRate;
+      if (this.subIndex >= 10) {
+        this.index = (this.index + 1) % 5;
+        this.subIndex = 0;
+      }
+      this.count += 1;
+      if (this.count === 1000) {
+        this.movementRate += 1;
+        this.count = 1;
+      }
+
+      if (0 > this.xPos - 390) {
+        this.xPos = 800;
+      }
+    }
+  }]);
+
+  return Tree;
+}();
+
+module.exports = Tree;
 
 /***/ })
 

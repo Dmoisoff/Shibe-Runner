@@ -49,6 +49,7 @@ class Game{
   }
 
   play(enemy, spirit){
+    debugger
     if(this.time === 1000){
       this.time = 0;
       this.enemySpeed += 3;
@@ -72,7 +73,7 @@ class Game{
         this.dog = new Dog(this.dogImage);
       }
       this._ctx.clearRect(0,0,900,500);
-      this.generateBackground(this.image);
+      // this.generateBackground(this.image);
       this._floor();
       this.drawTrees(this.ctx);
         if(!enemy){
@@ -90,7 +91,7 @@ class Game{
           enemy.draw(this._ctx);
         }
 
-        if(!spirit && this.count < Math.floor(Math.random() * 21) + 80){
+        if(!spirit && this.count < Math.floor(Math.random() * 61) + 90){
           spirit = null;
         }else if(!spirit){
           spirit = this.spiritGenerator(this.currentScore.score());
@@ -187,7 +188,7 @@ class Game{
     // }
     this.currentScore = new Score(1, this.top);
     this._ctx.clearRect(0,0,900,500);
-    this.generateBackground(this.image);
+    // this.generateBackground(this.image);
     this.leafGenerator();
     debugger
     this.leafDrawer();
@@ -209,7 +210,7 @@ class Game{
 
   restartGame(enemy,spirit){
     this._ctx.clearRect(0,0,900,500);
-    this.generateBackground(this.image);
+    // this.generateBackground(this.image);
     // this.leafDrawer();
     this._floor();
     this.generatedTrees = false;
@@ -243,7 +244,7 @@ class Game{
 
   pauseGame(enemy,spirit){
     this._ctx.clearRect(0,0,800,500);
-    this.generateBackground(this.image);
+    // this.generateBackground(this.image);
     this._floor();
     this.drawTrees(this.ctx);
     enemy.draw(this._ctx);
@@ -377,6 +378,7 @@ const pic12 = "images/Hexen-Spirit copy_white.png";
 
 
 function createImages(pic1, pic2, pic3){
+  debugger
   let dogImage = new Image();
   dogImage.src = pic1;
   dogImage.onload = () => {
@@ -398,6 +400,11 @@ function createImages(pic1, pic2, pic3){
               let treeImage = new Image();
               treeImage.src = pic10;
               treeImage.onload = () =>{
+                document.documentElement.addEventListener('keydown', function (e) {
+                      if ( ( e.keycode || e.which ) == 32) {
+                          e.preventDefault();
+                      }
+                  }, false);
                 const game = new Game(document.getElementById('canvas'),900,500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage);
                 game.play();
               };

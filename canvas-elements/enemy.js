@@ -1,7 +1,7 @@
 
 class Enemy {
   constructor(image, speed, height){
-    this.x = 780;
+    this.x = 950;
     this.y = height;
     this.dx = .09;
     this.image = image;

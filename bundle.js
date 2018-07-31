@@ -192,8 +192,8 @@ var Dog = function () {
         this.subIndex = 0;
       }
       this.count += 1;
-      if (this.count === 1000) {
-        this.movementRate += 1;
+      if (this.count === 5000) {
+        this.movementRate += 5;
         this.count = 1;
       }
     }
@@ -224,7 +224,7 @@ var Enemy = function () {
   function Enemy(image, speed, height) {
     _classCallCheck(this, Enemy);
 
-    this.x = 780;
+    this.x = 950;
     this.y = height;
     this.dx = .09;
     this.image = image;
@@ -326,6 +326,7 @@ var Game = function () {
     this.blossoms = [];
     this.trees = [];
     this.time = 0;
+    this.environmentSpeed = 3;
   }
 
   _createClass(Game, [{
@@ -353,7 +354,7 @@ var Game = function () {
         this.count -= 1;
         this.pauseGame(enemy, spirit);
       } else {
-        this._ctx.clearRect(0, 0, 800, 500);
+        this._ctx.clearRect(0, 0, 900, 500);
         this.generateBackground(this.image);
         this._floor();
         this.drawTrees(this.ctx);
@@ -445,13 +446,13 @@ var Game = function () {
   }, {
     key: 'generateBackground',
     value: function generateBackground(img) {
-      return this._ctx.drawImage(img, 0, 0, 800, 400);
+      return this._ctx.drawImage(img, 0, 0, 900, 400);
     }
   }, {
     key: 'drawScore',
     value: function drawScore(_ctx) {
       _ctx.font = "16px Arial";
-      _ctx.fillStyle = "rgba(0, 0, 0, 1)";
+      _ctx.fillStyle = "rgba(255, 255, 255, 1)";
       _ctx.fillText('Score: ' + this.currentScore.score(), 8, 20);
     }
   }, {
@@ -477,11 +478,11 @@ var Game = function () {
       //   this.postScore();
       // }
       this.currentScore = new Score(1, this.top);
-      this._ctx.clearRect(0, 0, 800, 500);
+      this._ctx.clearRect(0, 0, 900, 500);
       this.generateBackground(this.image);
       this.leafGenerator();
       debugger;
-      // this.leafDrawer();
+      this.leafDrawer();
       this._floor();
       this.treeGenerator();
       // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 0, 220, 380, 270);
@@ -490,7 +491,9 @@ var Game = function () {
       document.addEventListener('keydown', this.pauseHandler, false);
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(150, 75, 500, 300);
-      this._ctx.font = "32px Shojumaru, cursive";
+      // this._ctx.font = "32px Shojumaru, cursive";
+      // this._ctx.font = "32px Unica One, cursive;";
+      this._ctx.font = "32px Goudy Bookletter 1911, serif;";
       this._ctx.fillStyle = "rgba(255,183,197,1)";
       this._ctx.fillText('Press Enter', 268, 115);
       this._ctx.fillText('to start the game.', 210, 155);
@@ -498,10 +501,11 @@ var Game = function () {
   }, {
     key: 'restartGame',
     value: function restartGame(enemy, spirit) {
-      this._ctx.clearRect(0, 0, 800, 500);
+      this._ctx.clearRect(0, 0, 900, 500);
       this.generateBackground(this.image);
       // this.leafDrawer();
       this._floor();
+      this.drawTrees(this.ctx);
       enemy.draw(this._ctx);
       this.dog.draw(this._ctx);
       if (spirit) {
@@ -509,7 +513,9 @@ var Game = function () {
       }
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(150, 75, 500, 300);
-      this._ctx.font = "32px Shojumaru, cursive";
+      // this._ctx.font = "32px Shojumaru, cursive";
+      // this._ctx.font = "32px Unica One, cursive;";
+      this._ctx.font = "32px Goudy Bookletter 1911, serif;";
       this._ctx.fillStyle = "rgba(255,183,197,1)";
       this._ctx.fillText('Press Enter', 268, 115);
       this._ctx.fillText('to restart the game.', 195, 155);
@@ -532,6 +538,7 @@ var Game = function () {
       this._ctx.clearRect(0, 0, 800, 500);
       this.generateBackground(this.image);
       this._floor();
+      this.drawTrees(this.ctx);
       enemy.draw(this._ctx);
       this.dog.draw(this._ctx);
       if (spirit) {
@@ -539,7 +546,9 @@ var Game = function () {
       }
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(150, 75, 500, 300);
-      this._ctx.font = "32px Arial";
+      // this._ctx.font = "32px Arial";
+      // this._ctx.font = "32px Unica One, cursive;";
+      this._ctx.font = "32px Goudy Bookletter 1911, serif;";
       this._ctx.fillStyle = "rgba(255,183,197,1)";
       this._ctx.fillText('The game is paused', 245, 115);
       this._ctx.fillText('press p to start.', 280, 155);
@@ -631,9 +640,9 @@ var Game = function () {
     value: function treeGenerator() {
       if (!this.generatedTrees) {
         var x = 500;
-        for (var i = 0; i < 2; i++) {
+        for (var i = 0; i < 3; i++) {
           debugger;
-          var tree = new Tree(this.treeImage, x * i, this.enemySpeed);
+          var tree = new Tree(this.treeImage, x * i, this.environmentSpeed);
           tree.draw(this._ctx);
           this.trees.push(tree);
         }
@@ -647,7 +656,7 @@ var Game = function () {
 
       debugger;
       this.trees.forEach(function (tree) {
-        tree.draw(_this3.ctx);
+        tree.draw(_this3._ctx);
       });
     }
   }]);
@@ -665,6 +674,7 @@ var pic7 = "images/groundfiles/Ground Tiles copy.png";
 var pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
 var pic9 = "images/cherry_blossems_sprites.png";
 var pic10 = "images/kisspng-sprite-desktop-wallpaper-fruit-tree-fir-tree-5ace4a93d182a1.6415131015234689478582.png";
+var pic11 = "images/fuji.gif";
 
 function createImages(pic1, pic2, pic3) {
   var dogImage = new Image();
@@ -677,7 +687,7 @@ function createImages(pic1, pic2, pic3) {
       spiritImage.src = pic6;
       spiritImage.onload = function () {
         var mountFuji = new Image();
-        mountFuji.src = pic8;
+        mountFuji.src = pic11;
         mountFuji.onload = function () {
           var cherryBlossems = new Image();
           cherryBlossems.src = pic9;
@@ -688,7 +698,7 @@ function createImages(pic1, pic2, pic3) {
               var treeImage = new Image();
               treeImage.src = pic10;
               treeImage.onload = function () {
-                var game = new Game(document.getElementById('canvas'), 800, 500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage);
+                var game = new Game(document.getElementById('canvas'), 900, 500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage);
                 game.play();
               };
             };
@@ -1034,7 +1044,7 @@ var Spirit = function () {
     _classCallCheck(this, Spirit);
 
     this.image = image;
-    this.x = 789;
+    this.x = 1000;
     this.y = height;
     this.dx = .05;
     this.speed = speed;
@@ -1105,6 +1115,8 @@ var Tree = function () {
     this.subIndex = 0;
     this.count = 0;
     this.movementRate = speed;
+    this.treeFull = false;
+    this.treeReverse = false;
   }
 
   // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 500, 220, 380, 270);
@@ -1114,22 +1126,41 @@ var Tree = function () {
   _createClass(Tree, [{
     key: "draw",
     value: function draw(ctx) {
-      ctx.drawImage(this.treeImage, 0, 747, 275, 350, this.xPos, 220, 380, 270);
+      ctx.drawImage(this.treeImage, this.index * 270, 747, 275, 350, this.xPos, 220, 380, 270);
       this.xPos -= this.dx;
 
       this.subIndex += this.movementRate;
-      if (this.subIndex >= 10) {
-        this.index = (this.index + 1) % 5;
+      if (this.subIndex >= 1000 && !this.treeFull) {
+        this.index = (this.index + 1) % 15;
+        if (this.index * 270 === 3780) {
+          this.treeFull = true;
+          this.treeReverse = true;
+        }
         this.subIndex = 0;
       }
+
+      if (this.treeFull) {
+        if (this.treeReverse) {
+          this.index - 1;
+          if (this.index === 11) {
+            this.treeReverse = false;
+          } else {
+            this.index + 1;
+            if (this.index === 14) {
+              this.treeReverse = true;
+            }
+          }
+        }
+      }
+
       this.count += 1;
       if (this.count === 1000) {
-        this.movementRate += 1;
+        this.movementRate += 5;
         this.count = 1;
       }
 
-      if (0 > this.xPos - 390) {
-        this.xPos = 800;
+      if (this.xPos < 0 - 390) {
+        this.xPos = 1200;
       }
     }
   }]);

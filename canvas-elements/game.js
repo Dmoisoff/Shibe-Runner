@@ -44,6 +44,7 @@ class Game{
     this.blossoms = [];
     this.trees = [];
     this.time = 0;
+    this.environmentSpeed = 3;
   }
 
   play(enemy, spirit){
@@ -65,7 +66,7 @@ class Game{
       this.count -= 1;
       this.pauseGame(enemy,spirit);
     }else{
-      this._ctx.clearRect(0,0,800,500);
+      this._ctx.clearRect(0,0,900,500);
       this.generateBackground(this.image);
       this._floor();
       this.drawTrees(this.ctx);
@@ -151,12 +152,12 @@ class Game{
 
 
   generateBackground(img){
-      return this._ctx.drawImage(img, 0, 0, 800, 400);
+      return this._ctx.drawImage(img, 0, 0, 900, 400);
   }
 
   drawScore(_ctx){
     _ctx.font = "16px Arial";
-    _ctx.fillStyle = "rgba(0, 0, 0, 1)";
+    _ctx.fillStyle = "rgba(255, 255, 255, 1)";
     _ctx.fillText(`Score: ${this.currentScore.score()}`, 8, 20);
   }
 
@@ -180,11 +181,11 @@ class Game{
     //   this.postScore();
     // }
     this.currentScore = new Score(1, this.top);
-    this._ctx.clearRect(0,0,800,500);
+    this._ctx.clearRect(0,0,900,500);
     this.generateBackground(this.image);
     this.leafGenerator();
     debugger
-    // this.leafDrawer();
+    this.leafDrawer();
     this._floor();
     this.treeGenerator();
     // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 0, 220, 380, 270);
@@ -193,17 +194,20 @@ class Game{
     document.addEventListener('keydown', this.pauseHandler, false);
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
     this._ctx.fillRect(150, 75, 500, 300);
-    this._ctx.font = "32px Shojumaru, cursive";
+    // this._ctx.font = "32px Shojumaru, cursive";
+    // this._ctx.font = "32px Unica One, cursive;";
+    this._ctx.font = "32px Goudy Bookletter 1911, serif;";
     this._ctx.fillStyle = "rgba(255,183,197,1)";
     this._ctx.fillText(`Press Enter`, 268, 115);
     this._ctx.fillText(`to start the game.`, 210, 155);
   }
 
   restartGame(enemy,spirit){
-    this._ctx.clearRect(0,0,800,500);
+    this._ctx.clearRect(0,0,900,500);
     this.generateBackground(this.image);
     // this.leafDrawer();
     this._floor();
+    this.drawTrees(this.ctx);
     enemy.draw(this._ctx);
     this.dog.draw(this._ctx);
     if(spirit){
@@ -211,7 +215,9 @@ class Game{
     }
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
     this._ctx.fillRect(150, 75, 500, 300);
-    this._ctx.font = "32px Shojumaru, cursive";
+    // this._ctx.font = "32px Shojumaru, cursive";
+    // this._ctx.font = "32px Unica One, cursive;";
+    this._ctx.font = "32px Goudy Bookletter 1911, serif;";
     this._ctx.fillStyle = "rgba(255,183,197,1)";
     this._ctx.fillText(`Press Enter`, 268, 115);
     this._ctx.fillText(`to restart the game.`, 195, 155);
@@ -233,6 +239,7 @@ class Game{
     this._ctx.clearRect(0,0,800,500);
     this.generateBackground(this.image);
     this._floor();
+    this.drawTrees(this.ctx);
     enemy.draw(this._ctx);
     this.dog.draw(this._ctx);
     if(spirit){
@@ -240,7 +247,9 @@ class Game{
     }
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
     this._ctx.fillRect(150, 75, 500, 300);
-    this._ctx.font = "32px Arial";
+    // this._ctx.font = "32px Arial";
+    // this._ctx.font = "32px Unica One, cursive;";
+    this._ctx.font = "32px Goudy Bookletter 1911, serif;";
     this._ctx.fillStyle = "rgba(255,183,197,1)";
     this._ctx.fillText(`The game is paused`, 245, 115);
     this._ctx.fillText(`press p to start.`, 280, 155);
@@ -323,9 +332,9 @@ class Game{
   treeGenerator(){
     if (!this.generatedTrees) {
       let x = 500;
-      for (let i = 0; i < 2; i++) {
+      for (let i = 0; i < 3; i++) {
         debugger
-        const tree = new Tree(this.treeImage, (x * i), this.enemySpeed);
+        const tree = new Tree(this.treeImage, (x * i), this.environmentSpeed);
         tree.draw(this._ctx);
         this.trees.push(tree);
       }
@@ -336,7 +345,7 @@ class Game{
   drawTrees(ctx){
     debugger
     this.trees.forEach((tree) => {
-      tree.draw(this.ctx);
+      tree.draw(this._ctx);
     });
   }
 
@@ -356,6 +365,7 @@ const pic7 = "images/groundfiles/Ground Tiles copy.png";
 const pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
 const pic9 = "images/cherry_blossems_sprites.png";
 const pic10 = "images/kisspng-sprite-desktop-wallpaper-fruit-tree-fir-tree-5ace4a93d182a1.6415131015234689478582.png";
+const pic11 = "images/fuji.gif";
 
 
 function createImages(pic1, pic2, pic3){
@@ -369,7 +379,7 @@ function createImages(pic1, pic2, pic3){
       spiritImage.src = pic6;
       spiritImage.onload = () =>{
         let mountFuji = new Image();
-        mountFuji.src = pic8;
+        mountFuji.src = pic11;
         mountFuji.onload = () => {
           let cherryBlossems = new Image();
           cherryBlossems.src = pic9;
@@ -380,7 +390,7 @@ function createImages(pic1, pic2, pic3){
               let treeImage = new Image();
               treeImage.src = pic10;
               treeImage.onload = () =>{
-                const game = new Game(document.getElementById('canvas'),800,500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage);
+                const game = new Game(document.getElementById('canvas'),900,500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage);
                 game.play();
               };
             };

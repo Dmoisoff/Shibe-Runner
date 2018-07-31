@@ -85,8 +85,8 @@ class Dog{
       this.subIndex = 0;
     }
     this.count += 1;
-    if (this.count === 1000 ) {
-      this.movementRate += 1;
+    if (this.count === 5000 ) {
+      this.movementRate += 5;
       this.count = 1;
     }
   }

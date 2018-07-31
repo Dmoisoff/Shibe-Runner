@@ -14,7 +14,9 @@ span, article, footer, time, small {
   vertical-align: inherit;
   box-sizing: inherit;
   background: transparent;
-  font-family: 'Shojumaru', cursive;
+  /* font-family: 'Shojumaru', cursive; */
+  /* font-family: 'Unica One', cursive; */
+  font-family: 'Goudy Bookletter 1911', serif;
 }
 
 ul {

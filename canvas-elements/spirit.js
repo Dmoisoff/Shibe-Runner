@@ -1,7 +1,7 @@
 class Spirit {
   constructor(image, speed, height){
     this.image = image;
-    this.x = 789;
+    this.x = 1000;
     this.y = height;
     this.dx = .05;
     this.speed = speed;

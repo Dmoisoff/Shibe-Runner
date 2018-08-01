@@ -38,8 +38,6 @@ class Dog{
     return [this.xPos, this.yPos];
   }
 
-
-
   arcUp(value){
     if(value < 255){
       return(2);
@@ -61,12 +59,15 @@ class Dog{
   }
 
 
+
   draw(_ctx){
     // debugger
     // _ctx.clearRect(0,0,800,500);
     // debugger
     // _ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
-    _ctx.drawImage(this.pexelDog, (this.index * 36.6), 264,  37.6,23.4, this.xPos, this.yPos, 85, 65);
+    const animate = [0,37.2,36.7,36.6,36.4];
+    const animateCrop = [37.6,37.7,37.6,37,36];
+    _ctx.drawImage(this.pexelDog, (this.index * animate[this.index]), 264, animateCrop[this.index],23.4, this.xPos, this.yPos, 95, 65);
     if(this.jump && this.yPos > 235 ){
       this.yPos -= this.arcUp(this.yPos);
       if(Math.floor(this.yPos) <= 235){
@@ -81,7 +82,7 @@ class Dog{
       }
     }
     this.subIndex += this.spriteSpeed;
-    if( this.subIndex >= 10 ){
+    if( this.subIndex >= 20 ){
       this.index = (this.index + 1) % 5;
       this.subIndex = 0;
     }

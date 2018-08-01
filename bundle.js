@@ -173,7 +173,9 @@ var Dog = function () {
       // _ctx.clearRect(0,0,800,500);
       // debugger
       // _ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
-      _ctx.drawImage(this.pexelDog, this.index * 36.6, 264, 37.6, 23.4, this.xPos, this.yPos, 85, 65);
+      var animate = [0, 37.2, 36.7, 36.6, 36.4];
+      var animateCrop = [37.6, 37.7, 37.6, 37, 36];
+      _ctx.drawImage(this.pexelDog, this.index * animate[this.index], 264, animateCrop[this.index], 23.4, this.xPos, this.yPos, 95, 65);
       if (this.jump && this.yPos > 235) {
         this.yPos -= this.arcUp(this.yPos);
         if (Math.floor(this.yPos) <= 235) {
@@ -188,7 +190,7 @@ var Dog = function () {
         }
       }
       this.subIndex += this.spriteSpeed;
-      if (this.subIndex >= 10) {
+      if (this.subIndex >= 20) {
         this.index = (this.index + 1) % 5;
         this.subIndex = 0;
       }
@@ -258,7 +260,7 @@ var Enemy = function () {
   }, {
     key: "collision",
     value: function collision(enemy, dog) {
-      if (enemy.enemyPos()[0] > 10 && enemy.enemyPos()[0] < 145 && dog.dogPosition()[1] >= 325 && enemy.enemyPos()[1] === 335) {
+      if (enemy.enemyPos()[0] > 10 && enemy.enemyPos()[0] < 140 && dog.dogPosition()[1] >= 325 && enemy.enemyPos()[1] === 335) {
         return true;
       } else if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] <= 300 && enemy.enemyPos()[1] === 275) {
         return true;
@@ -349,6 +351,7 @@ var Game = function () {
     value: function play(enemy, spirit) {
       var _this = this;
 
+      debugger;
       if (this.time === 1000) {
         debugger;
         this.time = 0;
@@ -377,6 +380,7 @@ var Game = function () {
           this.dog = new Dog(this.dogImage);
         }
         this._ctx.clearRect(0, 0, 900, 500);
+        debugger;
         this.leafDrawer();
         this.drawGround(this._ctx);
         this.drawTrees(this._ctx);

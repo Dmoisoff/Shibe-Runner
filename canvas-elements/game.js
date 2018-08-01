@@ -52,6 +52,7 @@ class Game{
   }
 
   play(enemy, spirit){
+    debugger
     if(this.time === 1000){
       debugger
       this.time = 0;
@@ -78,6 +79,7 @@ class Game{
         this.dog = new Dog(this.dogImage);
       }
       this._ctx.clearRect(0,0,900,500);
+      debugger
       this.leafDrawer();
       this.drawGround(this._ctx);
       this.drawTrees(this._ctx);

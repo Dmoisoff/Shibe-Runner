@@ -11,8 +11,6 @@ class Tree{
     this.treeReverse = false;
   }
 
-// this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 500, 220, 380, 270);
-// this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 0, 220, 380, 270);
   draw(ctx){
     ctx.drawImage(this.treeImage, (this.index * 270), 747, 275, 350, this.xPos, 220, 200, 270);
     this.xPos -= this.dx;

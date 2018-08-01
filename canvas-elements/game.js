@@ -36,6 +36,7 @@ class Game{
     this.playGame = false;
     this.enemySpeed = 14;
     this.enemyheight = 335;
+    this.enemyAnimation = 1;
     this.pause = false;
     this.enemy = null;
     this.spirit = null;
@@ -73,9 +74,11 @@ class Game{
         // debugger
         this.treeGenerator();
         this.groundGenerator();
+        this.leafGenerator();
         this.dog = new Dog(this.dogImage);
       }
       this._ctx.clearRect(0,0,900,500);
+      this.leafDrawer();
       this.drawGround(this._ctx);
       this.drawTrees(this._ctx);
         if(!enemy){
@@ -126,15 +129,13 @@ class Game{
   }
 
   enemyGenerator(score){
-    // if(score % 500 > 200){
-    //   this.enemySpeed += .4;
-    // }
+    this.enemyAnimation += .05;
     if(score % 600 > 400){
       this.enemyheight = 275;
     }else{
       this.enemyheight = 335;
     }
-    const enemy = new Enemy(this.enemyImage, this.enemySpeed, this.enemyheight);
+    const enemy = new Enemy(this.enemyImage, this.enemySpeed, this.enemyheight, this.enemyAnimation);
     return enemy;
   }
 
@@ -175,9 +176,9 @@ class Game{
     this.currentScore = new Score(1, this.top);
     this._ctx.clearRect(0,0,900,500);
     debugger
+    this.leafGenerator();
     this.groundGenerator();
     this.treeGenerator();
-    // this.generateBackground(this.image);
     document.addEventListener('keydown', this.KeyDownHandler, false);
     document.addEventListener('keydown', this.pauseHandler, false);
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
@@ -195,6 +196,8 @@ class Game{
     this.drawGround(this.ctx);
     this.generatedTrees = false;
     this.generatedground = false;
+    this.generatedLeafs = false;
+    this.leafDrawer();
     this.drawTrees(this.ctx);
     enemy.draw(this._ctx);
     this.dog.draw(this._ctx);
@@ -228,6 +231,7 @@ class Game{
     this._ctx.clearRect(0,0,900,500);
     // this.generateBackground(this.image);
     // this._floor();
+    this.leafDrawer();
     this.drawGround(this._ctx);
     this.drawTrees(this.ctx);
     enemy.draw(this._ctx);
@@ -304,8 +308,9 @@ class Game{
 
   leafGenerator(){
     if(!this.generatedLeafs)
-    for (let i = 0; i < 1; i++) {
-      const leaf = new Leaf(this.cherryBlossems, 10 , 37 , 1);
+    this.blossoms = [];
+    for (let i = 0; i < 100; i++) {
+      const leaf = new Leaf(this.cherryBlossems, i , 37 , .1);
       leaf.draw(this._ctx);
       this.blossoms.push(leaf);
     }
@@ -373,7 +378,7 @@ const pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
 const pic9 = "images/cherry_blossems_sprites.png";
 const pic10 = "images/kisspng-sprite-desktop-wallpaper-fruit-tree-fir-tree-5ace4a93d182a1.6415131015234689478582.png";
 const pic11 = "images/fuji.gif";
-const pic12 = "images/Hexen-Spirit copy_white.png";
+const pic12 = "images/Hexen-Spirit_dark.png";
 
 
 function createImages(pic1, pic2, pic3){
@@ -381,7 +386,7 @@ function createImages(pic1, pic2, pic3){
   dogImage.src = pic1;
   dogImage.onload = () => {
     let enemyImage = new Image();
-    enemyImage.src = pic2;
+    enemyImage.src = pic12;
     enemyImage.onload = () => {
       let spiritImage = new Image();
       spiritImage.src = pic6;

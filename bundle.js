@@ -223,7 +223,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Enemy = function () {
-  function Enemy(image, speed, height) {
+  function Enemy(image, speed, height, animate) {
     _classCallCheck(this, Enemy);
 
     this.x = 950;
@@ -231,6 +231,9 @@ var Enemy = function () {
     this.dx = .09;
     this.image = image;
     this.speed = speed;
+    this.index = 0;
+    this.subIndex = 0;
+    this.animate = animate;
   }
 
   _createClass(Enemy, [{
@@ -241,15 +244,21 @@ var Enemy = function () {
   }, {
     key: "draw",
     value: function draw(_ctx) {
-      _ctx.drawImage(this.image, this.x, this.y, 95, 65);
+      _ctx.drawImage(this.image, this.index * 70, 36, 65, 30, this.x, this.y, 110, 65);
       if (this.x >= 0 - 95) {
         this.x -= this.speed;
+      }
+
+      this.subIndex += this.animate;
+      if (this.subIndex >= 80) {
+        this.index = (this.index + 1) % 2;
+        this.subIndex = 0;
       }
     }
   }, {
     key: "collision",
     value: function collision(enemy, dog) {
-      if (enemy.enemyPos()[0] > 10 && enemy.enemyPos()[0] < 150 && dog.dogPosition()[1] >= 325 && enemy.enemyPos()[1] === 335) {
+      if (enemy.enemyPos()[0] > 10 && enemy.enemyPos()[0] < 145 && dog.dogPosition()[1] >= 325 && enemy.enemyPos()[1] === 335) {
         return true;
       } else if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] <= 300 && enemy.enemyPos()[1] === 275) {
         return true;
@@ -320,6 +329,7 @@ var Game = function () {
     this.playGame = false;
     this.enemySpeed = 14;
     this.enemyheight = 335;
+    this.enemyAnimation = 1;
     this.pause = false;
     this.enemy = null;
     this.spirit = null;
@@ -363,9 +373,11 @@ var Game = function () {
           // debugger
           this.treeGenerator();
           this.groundGenerator();
+          this.leafGenerator();
           this.dog = new Dog(this.dogImage);
         }
         this._ctx.clearRect(0, 0, 900, 500);
+        this.leafDrawer();
         this.drawGround(this._ctx);
         this.drawTrees(this._ctx);
         if (!enemy) {
@@ -421,15 +433,13 @@ var Game = function () {
   }, {
     key: 'enemyGenerator',
     value: function enemyGenerator(score) {
-      // if(score % 500 > 200){
-      //   this.enemySpeed += .4;
-      // }
+      this.enemyAnimation += .05;
       if (score % 600 > 400) {
         this.enemyheight = 275;
       } else {
         this.enemyheight = 335;
       }
-      var enemy = new Enemy(this.enemyImage, this.enemySpeed, this.enemyheight);
+      var enemy = new Enemy(this.enemyImage, this.enemySpeed, this.enemyheight, this.enemyAnimation);
       return enemy;
     }
   }, {
@@ -473,9 +483,9 @@ var Game = function () {
       this.currentScore = new Score(1, this.top);
       this._ctx.clearRect(0, 0, 900, 500);
       debugger;
+      this.leafGenerator();
       this.groundGenerator();
       this.treeGenerator();
-      // this.generateBackground(this.image);
       document.addEventListener('keydown', this.KeyDownHandler, false);
       document.addEventListener('keydown', this.pauseHandler, false);
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
@@ -494,6 +504,8 @@ var Game = function () {
       this.drawGround(this.ctx);
       this.generatedTrees = false;
       this.generatedground = false;
+      this.generatedLeafs = false;
+      this.leafDrawer();
       this.drawTrees(this.ctx);
       enemy.draw(this._ctx);
       this.dog.draw(this._ctx);
@@ -528,6 +540,7 @@ var Game = function () {
       this._ctx.clearRect(0, 0, 900, 500);
       // this.generateBackground(this.image);
       // this._floor();
+      this.leafDrawer();
       this.drawGround(this._ctx);
       this.drawTrees(this.ctx);
       enemy.draw(this._ctx);
@@ -609,8 +622,9 @@ var Game = function () {
   }, {
     key: 'leafGenerator',
     value: function leafGenerator() {
-      if (!this.generatedLeafs) for (var i = 0; i < 1; i++) {
-        var leaf = new Leaf(this.cherryBlossems, 10, 37, 1);
+      if (!this.generatedLeafs) this.blossoms = [];
+      for (var i = 0; i < 100; i++) {
+        var leaf = new Leaf(this.cherryBlossems, i, 37, .1);
         leaf.draw(this._ctx);
         this.blossoms.push(leaf);
       }
@@ -687,14 +701,14 @@ var pic8 = "images/Mount_Fuji_from_mount_tanjo crop_pixel.png";
 var pic9 = "images/cherry_blossems_sprites.png";
 var pic10 = "images/kisspng-sprite-desktop-wallpaper-fruit-tree-fir-tree-5ace4a93d182a1.6415131015234689478582.png";
 var pic11 = "images/fuji.gif";
-var pic12 = "images/Hexen-Spirit copy_white.png";
+var pic12 = "images/Hexen-Spirit_dark.png";
 
 function createImages(pic1, pic2, pic3) {
   var dogImage = new Image();
   dogImage.src = pic1;
   dogImage.onload = function () {
     var enemyImage = new Image();
-    enemyImage.src = pic2;
+    enemyImage.src = pic12;
     enemyImage.onload = function () {
       var spiritImage = new Image();
       spiritImage.src = pic6;
@@ -808,15 +822,22 @@ var Leaf = function () {
     _classCallCheck(this, Leaf);
 
     this.image = image;
-    this.xPos = iteration * x;
-    this.yPos = -50;
+    this.xPos = iteration % 24 * x;
+    this.height = Math.floor(Math.random() * (400 - 0 + 1)) + 0;
+    this.yPos = this.height;
     this.dx = speed;
     this.dy = speed;
     this.movementRate = speed;
-    this.index = 0;
+    this.index = iteration % 2;
     this.subIndex = 0;
     this.count = 0;
-    this.xStart = iteration * x;
+    this.xStart = this.xPos;
+    this.yStart = 0 - this.height;
+    if (iteration % 5 === 0) {
+      this.animate = false;
+    } else {
+      this.animate = true;
+    }
     // this.yStart = 0;
   }
 
@@ -835,20 +856,27 @@ var Leaf = function () {
       this.xPos -= this.dx;
 
       this.subIndex += this.movementRate;
-      if (this.subIndex >= 10) {
+      if (this.subIndex >= 10 && this.animate) {
         this.index = (this.index + 1) % 2;
         this.subIndex = 0;
       }
       this.count += 1;
       if (this.count === 1000) {
-        this.movementRate += .5;
+        this.movementRate += .1;
+        this.dx += this.movementRate;
+        this.dy += this.movementRate;
         this.count = 1;
       }
 
-      if (this.yPos > 400 || this.xPos > 800) {
-        this.xPos = this.xStart;
-        this.yPos = 0;
+      if (this.yPos > 400) {
+        this.xPos = this.xStart + Math.floor(Math.random() * (800 - 100 + 1)) + 100;
+        this.yPos = -25;
       }
+      //
+      // // if(this.xPos < 800){
+      // //   this.xPos = this.xStart;
+      // //   this.yPos = 0;
+      // // }
     }
   }]);
 
@@ -1143,10 +1171,6 @@ var Tree = function () {
     this.treeFull = false;
     this.treeReverse = false;
   }
-
-  // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 500, 220, 380, 270);
-  // this._ctx.drawImage(this.treeImage, 0, 747, 275, 350, 0, 220, 380, 270);
-
 
   _createClass(Tree, [{
     key: "draw",

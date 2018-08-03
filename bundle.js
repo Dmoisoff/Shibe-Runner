@@ -167,6 +167,22 @@ var Dog = function () {
       }
     }
   }, {
+    key: 'sleep',
+    value: function sleep(_ctx) {
+      var animate = [0, 37.2, 36.7, 36.6, 36.4];
+      var animateCrop = [37.6, 37.7, 37.6, 37, 36];
+      _ctx.drawImage(this.pexelDog, this.index * animate[this.index], 264, animateCrop[this.index], 23.4, this.xPos, this.yPos, 95, 65);
+      this.subIndex += 1;
+      if (this.subIndex >= 20) {
+        this.index = (this.index + 1) % 5;
+        this.subIndex = 0;
+      }
+      this.count += 1;
+      if (this.count === 1000) {
+        this.count = 1;
+      }
+    }
+  }, {
     key: 'draw',
     value: function draw(_ctx) {
       // debugger
@@ -351,9 +367,9 @@ var Game = function () {
     value: function play(enemy, spirit) {
       var _this = this;
 
-      debugger;
+      // debugger
       if (this.time === 1000) {
-        debugger;
+        // debugger
         this.time = 0;
         this.enemySpeed += 3;
       }
@@ -366,6 +382,7 @@ var Game = function () {
         });
       } else if (!this.playGame) {
         this.count = 0;
+        this.enemyAnimation = 1;
         this.dog.movementRate = 1;
         this.restartGame(enemy, spirit);
       } else if (this.pause) {
@@ -380,7 +397,7 @@ var Game = function () {
           this.dog = new Dog(this.dogImage);
         }
         this._ctx.clearRect(0, 0, 900, 500);
-        debugger;
+        // debugger
         this.leafDrawer();
         this.drawGround(this._ctx);
         this.drawTrees(this._ctx);
@@ -480,13 +497,14 @@ var Game = function () {
   }, {
     key: 'startGame',
     value: function startGame() {
-      // if(localStorage.topFive){
-      //   this.top = localStorage.topFive.split(',');
-      //   this.postScore();
-      // }
-      this.currentScore = new Score(1, this.top);
-      this._ctx.clearRect(0, 0, 900, 500);
       debugger;
+      this.currentScore = new Score(1, this.top);
+      if (localStorage.topFive) {
+        this.top = localStorage.topFive.split(',');
+        this.currentScore.postScore(this.top);
+      }
+      this._ctx.clearRect(0, 0, 900, 500);
+      // debugger
       this.leafGenerator();
       this.groundGenerator();
       this.treeGenerator();
@@ -494,12 +512,10 @@ var Game = function () {
       document.addEventListener('keydown', this.pauseHandler, false);
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(200, 75, 500, 300);
-      this._ctx.font = "32px Goudy Bookletter 1911, serif";
-      // this._ctx.font = "32px Unica One, cursive;";
-      // this._ctx.font = "32px Shojumaru, cursive";
+      this._ctx.font = "32px 'Arapey', serif";
       this._ctx.fillStyle = "rgba(255,183,197,1)";
-      this._ctx.fillText('Press Enter', 268, 115);
-      this._ctx.fillText('to start the game.', 210, 155);
+      this._ctx.fillText('Press Enter', 368, 115);
+      this._ctx.fillText('to start the game.', 325, 155);
     }
   }, {
     key: 'restartGame',
@@ -518,16 +534,12 @@ var Game = function () {
       }
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(200, 75, 500, 300);
-      // this._ctx.font = "32px Shojumaru, cursive";
-      this._ctx.font = "32px Goudy Bookletter 1911, serif";
-      this._ctx.font = "32px Unica One, cursive;";
+      this._ctx.font = "32px 'Arapey', serif";
       this._ctx.fillStyle = "rgba(255,183,197,1)";
-      this._ctx.fillText('Press Enter', 268, 115);
-      this._ctx.fillText('to restart the game.', 195, 155);
-      this._ctx.fillText('Your score was', 220, 205);
-      this._ctx.fillText('' + (this.currentScore.score() - 1), 370, 245);
-      // this._ctx.font = "28px Shojumaru, cursive";
-      // this._ctx.fillText(`Please enter your name`, 180, 285);
+      this._ctx.fillText('Press Enter', 368, 115);
+      this._ctx.fillText('to restart the game.', 325, 155);
+      this._ctx.fillText('Your score was', 348, 215);
+      this._ctx.fillText('' + (this.currentScore.score() - 1), 420, 245);
       if (!this.generatedScore) {
 
         this.currentScore.topFive(this.currentScore.score());
@@ -540,10 +552,8 @@ var Game = function () {
   }, {
     key: 'pauseGame',
     value: function pauseGame(enemy, spirit) {
-      debugger;
+      // debugger
       this._ctx.clearRect(0, 0, 900, 500);
-      // this.generateBackground(this.image);
-      // this._floor();
       this.leafDrawer();
       this.drawGround(this._ctx);
       this.drawTrees(this.ctx);
@@ -554,14 +564,12 @@ var Game = function () {
       }
       this._ctx.fillStyle = 'rgba(128,128,128,.7)';
       this._ctx.fillRect(200, 75, 500, 300);
-      // this._ctx.font = "32px Arial";
-      // this._ctx.font = "32px Unica One, cursive;";
-      this._ctx.font = "32px Goudy Bookletter 1911, serif";
+      this._ctx.font = "32px 'Arapey', serif";
       this._ctx.fillStyle = "rgba(255,183,197,1)";
-      this._ctx.fillText('The game is paused', 245, 115);
-      this._ctx.fillText('press p to start.', 280, 155);
-      this._ctx.fillText('Your current score is', 245, 205);
-      this._ctx.fillText('' + this.currentScore.score(), 360, 245);
+      this._ctx.fillText('The game is paused', 320, 115);
+      this._ctx.fillText('press p to start.', 355, 155);
+      this._ctx.fillText('Your current score is', 315, 215);
+      this._ctx.fillText('' + this.currentScore.score(), 440, 245);
     }
   }, {
     key: 'KeyDownHandler',
@@ -612,8 +620,6 @@ var Game = function () {
   }, {
     key: 'enemySpiritCollision',
     value: function enemySpiritCollision(enemy, spirit) {
-      // if(spirit.y === enemy.y){
-      // }
       if (enemy && spirit) {
         var spiritTime = (spirit.x - 75) / spirit.speed;
         var enemyTime = (enemy.x - 75) / enemy.speed;
@@ -788,7 +794,7 @@ var Ground = function () {
 
       this.count += 1;
       if (this.count === 1000) {
-        debugger;
+        // debugger
         this.movementRate += 1;
         this.dx += this.movementRate / 2;
         this.count = 1;
@@ -941,10 +947,12 @@ var Score = function () {
   }, {
     key: "topFive",
     value: function topFive(newScore) {
-      // debugger
+      debugger;
       var added = false;
       if (!this.top.length) {
-        return this.top = [newScore];
+        this.top = [newScore];
+        localStorage.topFive = this.top;
+        return this.top;
       }
       var newTop = this.top;
       for (var i = 0; i < this.top.length; i++) {
@@ -962,10 +970,14 @@ var Score = function () {
         newTop.pop();
       }
       this.top = newTop;
+      localStorage.topFive = this.top;
     }
   }, {
     key: "postScore",
-    value: function postScore() {
+    value: function postScore(top) {
+      if (top) {
+        this.top = top;
+      }
       for (var i = 0; i < this.top.length; i++) {
         var li = document.createElement('li');
         li.className += '' + 'control-instruction-styling';
@@ -1208,7 +1220,7 @@ var Tree = function () {
 
       this.count += 1;
       if (this.count === 1000) {
-        debugger;
+        // debugger
         this.movementRate += 1;
         this.dx += this.movementRate / 2;
         this.count = 1;

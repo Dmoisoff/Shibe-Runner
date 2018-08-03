@@ -24,10 +24,12 @@ class Score{
   }
 
   topFive(newScore){
-    // debugger
+    debugger
     let added = false;
     if (!this.top.length){
-    return this.top = [newScore];
+    this.top = [newScore];
+    localStorage.topFive = this.top;
+    return this.top;
     }
     let newTop = this.top;
     for (let i = 0; i < this.top.length; i++) {
@@ -45,9 +47,13 @@ class Score{
       newTop.pop();
     }
     this.top = newTop;
+    localStorage.topFive = this.top;
   }
 
-  postScore(){
+  postScore(top){
+    if(top){
+      this.top = top;
+    }
     for (let i = 0; i < this.top.length; i++) {
       let li = document.createElement('li');
       li.className += '' + 'control-instruction-styling';

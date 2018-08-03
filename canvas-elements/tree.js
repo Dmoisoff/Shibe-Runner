@@ -41,7 +41,7 @@ class Tree{
 
     this.count += 1;
     if (this.count === 1000 ) {
-      debugger
+      // debugger
       this.movementRate += 1;
       this.dx += (this.movementRate / 2);
       this.count = 1;

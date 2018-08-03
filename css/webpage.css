@@ -1,7 +1,6 @@
 .background{
-  background-color: gray;
-  width: 100%;
-  height: 100%;
+  background-color: #164d9a;
+  min-width: 900px;
 }
 
 .webpage-canvas-placement{
@@ -77,6 +76,8 @@ h3{
   display: block;
   width: 50%;
   height: auto;
+  max-width: 65px;
+  max-height: 65px;
 }
 
 .username{
@@ -102,4 +103,21 @@ h3{
   background: pink;
   border-radius: 5px;
   text-align: center;
+}
+
+.scores{
+  width: 375px;
+}
+
+
+#canvas-background{
+  position: absolute;
+  top: 0;
+  height: 100%;
+  z-index: -1;
+  width: 100%;
+  margin: 0;
+}
+.spacing{
+  margin-top: 10px;
 }

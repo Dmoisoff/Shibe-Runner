@@ -52,9 +52,9 @@ class Game{
   }
 
   play(enemy, spirit){
-    debugger
+    // debugger
     if(this.time === 1000){
-      debugger
+      // debugger
       this.time = 0;
       this.enemySpeed += 3;
     }
@@ -65,6 +65,7 @@ class Game{
       requestAnimationFrame(() => {this.play;});
     }else if (!this.playGame) {
       this.count = 0;
+      this.enemyAnimation = 1;
       this.dog.movementRate = 1;
       this.restartGame(enemy, spirit);
     }else if(this.pause){
@@ -79,7 +80,7 @@ class Game{
         this.dog = new Dog(this.dogImage);
       }
       this._ctx.clearRect(0,0,900,500);
-      debugger
+      // debugger
       this.leafDrawer();
       this.drawGround(this._ctx);
       this.drawTrees(this._ctx);
@@ -171,13 +172,14 @@ class Game{
   }
 
   startGame(){
-    // if(localStorage.topFive){
-    //   this.top = localStorage.topFive.split(',');
-    //   this.postScore();
-    // }
-    this.currentScore = new Score(1, this.top);
-    this._ctx.clearRect(0,0,900,500);
     debugger
+    this.currentScore = new Score(1, this.top);
+    if(localStorage.topFive){
+      this.top = localStorage.topFive.split(',');
+      this.currentScore.postScore(this.top);
+    }
+    this._ctx.clearRect(0,0,900,500);
+    // debugger
     this.leafGenerator();
     this.groundGenerator();
     this.treeGenerator();
@@ -185,12 +187,10 @@ class Game{
     document.addEventListener('keydown', this.pauseHandler, false);
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
     this._ctx.fillRect(200, 75, 500, 300);
-    this._ctx.font = "32px Goudy Bookletter 1911, serif";
-    // this._ctx.font = "32px Unica One, cursive;";
-    // this._ctx.font = "32px Shojumaru, cursive";
+    this._ctx.font = "32px 'Arapey', serif";
     this._ctx.fillStyle = "rgba(255,183,197,1)";
-    this._ctx.fillText(`Press Enter`, 268, 115);
-    this._ctx.fillText(`to start the game.`, 210, 155);
+    this._ctx.fillText(`Press Enter`, 368, 115);
+    this._ctx.fillText(`to start the game.`, 325, 155);
   }
 
   restartGame(enemy,spirit){
@@ -208,16 +208,12 @@ class Game{
     }
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
     this._ctx.fillRect(200, 75, 500, 300);
-    // this._ctx.font = "32px Shojumaru, cursive";
-    this._ctx.font = "32px Goudy Bookletter 1911, serif";
-    this._ctx.font = "32px Unica One, cursive;";
+    this._ctx.font = "32px 'Arapey', serif";
     this._ctx.fillStyle = "rgba(255,183,197,1)";
-    this._ctx.fillText(`Press Enter`, 268, 115);
-    this._ctx.fillText(`to restart the game.`, 195, 155);
-    this._ctx.fillText(`Your score was`, 220, 205);
-    this._ctx.fillText(`${(this.currentScore.score() - 1)}`, 370, 245);
-    // this._ctx.font = "28px Shojumaru, cursive";
-    // this._ctx.fillText(`Please enter your name`, 180, 285);
+    this._ctx.fillText(`Press Enter`, 368, 115);
+    this._ctx.fillText(`to restart the game.`, 325, 155);
+    this._ctx.fillText(`Your score was`, 348, 215);
+    this._ctx.fillText(`${(this.currentScore.score() - 1)}`, 420, 245);
     if(!this.generatedScore){
 
       this.currentScore.topFive(this.currentScore.score());
@@ -229,10 +225,8 @@ class Game{
   }
 
   pauseGame(enemy,spirit){
-    debugger
+    // debugger
     this._ctx.clearRect(0,0,900,500);
-    // this.generateBackground(this.image);
-    // this._floor();
     this.leafDrawer();
     this.drawGround(this._ctx);
     this.drawTrees(this.ctx);
@@ -243,14 +237,12 @@ class Game{
     }
     this._ctx.fillStyle = 'rgba(128,128,128,.7)';
     this._ctx.fillRect(200, 75, 500, 300);
-    // this._ctx.font = "32px Arial";
-    // this._ctx.font = "32px Unica One, cursive;";
-    this._ctx.font = "32px Goudy Bookletter 1911, serif";
+    this._ctx.font = "32px 'Arapey', serif";
     this._ctx.fillStyle = "rgba(255,183,197,1)";
-    this._ctx.fillText(`The game is paused`, 245, 115);
-    this._ctx.fillText(`press p to start.`, 280, 155);
-    this._ctx.fillText(`Your current score is`, 245, 205);
-    this._ctx.fillText(`${this.currentScore.score()}`, 360, 245);
+    this._ctx.fillText(`The game is paused`, 320, 115);
+    this._ctx.fillText(`press p to start.`, 355, 155);
+    this._ctx.fillText(`Your current score is`, 315, 215);
+    this._ctx.fillText(`${this.currentScore.score()}`, 440, 245);
   }
 
   KeyDownHandler(e){
@@ -295,8 +287,6 @@ class Game{
   }
 
   enemySpiritCollision(enemy, spirit){
-    // if(spirit.y === enemy.y){
-    // }
     if(enemy && spirit){
       const spiritTime = ((spirit.x - 75)/spirit.speed);
       const enemyTime = ((enemy.x - 75) /enemy.speed);

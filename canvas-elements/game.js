@@ -7,7 +7,7 @@ const Leaf = require('./leaf');
 const Tree = require('./tree');
 
 class Game{
-  constructor(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage){
+  constructor(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage, localStorage){
     this.dog = new Dog(dogImage);
     this.dogImage = dogImage;
     this.enemyImage = enemyImage;
@@ -20,6 +20,7 @@ class Game{
     this._width = width;
     this._height = height;
     this.image = mountFuji;
+    this.localStorage = localStorage;
     this._ctx = canvas.getContext('2d');
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.pauseHandler = this.pauseHandler.bind(this);
@@ -174,9 +175,9 @@ class Game{
   startGame(){
     debugger
     this.currentScore = new Score(1, this.top);
-    if(localStorage.topFive){
+    if(localStorage.topFive && this.localStorage){
       this.top = localStorage.topFive.split(',');
-      this.currentScore.postScore(this.top);
+      this.currentScore.postScore(this.top, this.localStorage);
     }
     this._ctx.clearRect(0,0,900,500);
     // debugger
@@ -357,6 +358,35 @@ class Game{
 }
 
 
+function browserCheck() {
+  debugger
+ if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 )
+{
+    return false;
+}
+else if(navigator.userAgent.indexOf("Chrome") != -1 )
+{
+    return true;
+}
+else if(navigator.userAgent.indexOf("Safari") != -1)
+{
+    return false;
+}
+else if(navigator.userAgent.indexOf("Firefox") != -1 )
+{
+     return true;
+}
+else if((navigator.userAgent.indexOf("MSIE") != -1 ) || (!!document.documentMode == true )) //IF IE > 10
+{
+  return false;
+}
+else
+{
+   return false;
+}
+}
+
+
 
 
 const pic1 = "images/PC Computer - Planet Centauri - Shiba_full.png";
@@ -400,7 +430,8 @@ function createImages(pic1, pic2, pic3){
                           e.preventDefault();
                       }
                   }, false);
-                const game = new Game(document.getElementById('canvas'),900,500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage);
+                  const localStorage = browserCheck()
+                const game = new Game(document.getElementById('canvas'),900,500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage, localStorage);
                 game.play();
               };
             };

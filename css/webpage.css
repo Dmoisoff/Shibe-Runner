@@ -64,6 +64,8 @@ h3{
 .links{
   display: flex;
   justify-content: space-evenly;
+  margin-bottom: 20px;
+  margin-top: 10px;
 }
 
 .icon-placement{
@@ -118,6 +120,36 @@ h3{
   width: 100%;
   margin: 0;
 }
+
 .spacing{
   margin-top: 10px;
+}
+
+.sprites-key{
+  width: 135px;
+  height: 100%;
+}
+
+.key-format{
+  display: flex;
+  justify-content: center;
+}
+
+.key-text-format{
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+}
+
+.white-font{
+  color: white;
+}
+
+h1{
+  font-size: 45px;
+}
+
+.center{
+  display: flex;
+  justify-content: center;
 }

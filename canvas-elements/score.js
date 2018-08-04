@@ -3,6 +3,7 @@ class Score{
     this.currentScore = startScore;
     this.top = topFive;
     this.username = [];
+    this.localStorage = false;
   }
 
   updateScore(newScore){
@@ -50,8 +51,9 @@ class Score{
     localStorage.topFive = this.top;
   }
 
-  postScore(top){
+  postScore(top, localStorage){
     if(top){
+      this.localStorage = localStorage
       this.top = top;
     }
     for (let i = 0; i < this.top.length; i++) {

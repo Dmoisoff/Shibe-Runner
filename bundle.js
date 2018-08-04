@@ -278,7 +278,7 @@ var Enemy = function () {
     value: function collision(enemy, dog) {
       if (enemy.enemyPos()[0] > 10 && enemy.enemyPos()[0] < 140 && dog.dogPosition()[1] >= 325 && enemy.enemyPos()[1] === 335) {
         return true;
-      } else if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 125 && dog.dogPosition()[1] <= 300 && enemy.enemyPos()[1] === 275) {
+      } else if (enemy.enemyPos()[0] > 0 && enemy.enemyPos()[0] < 140 && dog.dogPosition()[1] <= 300 && enemy.enemyPos()[1] === 275) {
         return true;
       } else {
         return false;
@@ -316,7 +316,7 @@ var Leaf = __webpack_require__(/*! ./leaf */ "./canvas-elements/leaf.js");
 var Tree = __webpack_require__(/*! ./tree */ "./canvas-elements/tree.js");
 
 var Game = function () {
-  function Game(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage) {
+  function Game(canvas, width, height, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage, localStorage) {
     _classCallCheck(this, Game);
 
     this.dog = new Dog(dogImage);
@@ -331,6 +331,7 @@ var Game = function () {
     this._width = width;
     this._height = height;
     this.image = mountFuji;
+    this.localStorage = localStorage;
     this._ctx = canvas.getContext('2d');
     this.KeyDownHandler = this.KeyDownHandler.bind(this);
     this.pauseHandler = this.pauseHandler.bind(this);
@@ -499,9 +500,9 @@ var Game = function () {
     value: function startGame() {
       debugger;
       this.currentScore = new Score(1, this.top);
-      if (localStorage.topFive) {
+      if (localStorage.topFive && this.localStorage) {
         this.top = localStorage.topFive.split(',');
-        this.currentScore.postScore(this.top);
+        this.currentScore.postScore(this.top, this.localStorage);
       }
       this._ctx.clearRect(0, 0, 900, 500);
       // debugger
@@ -700,6 +701,24 @@ var Game = function () {
   return Game;
 }();
 
+function browserCheck() {
+  debugger;
+  if ((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1) {
+    return false;
+  } else if (navigator.userAgent.indexOf("Chrome") != -1) {
+    return true;
+  } else if (navigator.userAgent.indexOf("Safari") != -1) {
+    return false;
+  } else if (navigator.userAgent.indexOf("Firefox") != -1) {
+    return true;
+  } else if (navigator.userAgent.indexOf("MSIE") != -1 || !!document.documentMode == true) //IF IE > 10
+    {
+      return false;
+    } else {
+    return false;
+  }
+}
+
 var pic1 = "images/PC Computer - Planet Centauri - Shiba_full.png";
 var pic2 = "images/Hexen-Spirit.png";
 var pic3 = "images/Mount_Fuji_from_mount_tanjo crop.jpg";
@@ -740,7 +759,8 @@ function createImages(pic1, pic2, pic3) {
                     e.preventDefault();
                   }
                 }, false);
-                var game = new Game(document.getElementById('canvas'), 900, 500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage);
+                var localStorage = browserCheck();
+                var game = new Game(document.getElementById('canvas'), 900, 500, mountFuji, dogImage, enemyImage, spiritImage, groundImage, cherryBlossems, treeImage, localStorage);
                 game.play();
               };
             };
@@ -920,6 +940,7 @@ var Score = function () {
     this.currentScore = startScore;
     this.top = topFive;
     this.username = [];
+    this.localStorage = false;
   }
 
   _createClass(Score, [{
@@ -974,8 +995,9 @@ var Score = function () {
     }
   }, {
     key: "postScore",
-    value: function postScore(top) {
+    value: function postScore(top, localStorage) {
       if (top) {
+        this.localStorage = localStorage;
         this.top = top;
       }
       for (var i = 0; i < this.top.length; i++) {

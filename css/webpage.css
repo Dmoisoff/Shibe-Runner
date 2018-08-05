@@ -152,6 +152,7 @@ h1{
 .center{
   display: flex;
   justify-content: center;
+  letter-spacing: .5px;
 }
 
 .size{

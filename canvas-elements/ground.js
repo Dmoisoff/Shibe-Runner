@@ -12,15 +12,9 @@ class Ground {
 
   draw(ctx){
     ctx.drawImage(this.groundImage, this.xPos, 395, 52, 110);
-    this.xPos -= this.dx;
-
-    // this.subIndex += this.movementRate;
-    //   this.index = (this.index + 1) % 15;
-    //   this.subIndex = 0;
-
+    this.xPos -= this.dx
     this.count += 1;
     if (this.count === 1000 ) {
-      // debugger
       this.movementRate += 1;
       this.dx += (this.movementRate / 2);
       this.count = 1;

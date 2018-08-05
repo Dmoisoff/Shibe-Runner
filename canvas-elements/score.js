@@ -25,7 +25,6 @@ class Score{
   }
 
   topFive(newScore){
-    debugger
     let added = false;
     if (!this.top.length){
     this.top = [newScore];

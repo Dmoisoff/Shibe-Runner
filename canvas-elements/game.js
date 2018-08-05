@@ -53,9 +53,7 @@ class Game{
   }
 
   play(enemy, spirit){
-    // debugger
     if(this.time === 1000){
-      // debugger
       this.time = 0;
       this.enemySpeed += 3;
     }
@@ -74,14 +72,12 @@ class Game{
       this.pauseGame(enemy,spirit);
     }else{
       if(!this.generatedTrees){
-        // debugger
         this.treeGenerator();
         this.groundGenerator();
         this.leafGenerator();
         this.dog = new Dog(this.dogImage);
       }
       this._ctx.clearRect(0,0,900,500);
-      // debugger
       this.leafDrawer();
       this.drawGround(this._ctx);
       this.drawTrees(this._ctx);
@@ -173,14 +169,12 @@ class Game{
   }
 
   startGame(){
-    debugger
     this.currentScore = new Score(1, this.top);
     if(localStorage.topFive && this.localStorage){
       this.top = localStorage.topFive.split(',');
       this.currentScore.postScore(this.top, this.localStorage);
     }
     this._ctx.clearRect(0,0,900,500);
-    // debugger
     this.leafGenerator();
     this.groundGenerator();
     this.treeGenerator();
@@ -226,7 +220,6 @@ class Game{
   }
 
   pauseGame(enemy,spirit){
-    // debugger
     this._ctx.clearRect(0,0,900,500);
     this.leafDrawer();
     this.drawGround(this._ctx);
@@ -359,7 +352,6 @@ class Game{
 
 
 function browserCheck() {
-  debugger
  if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 )
 {
     return false;

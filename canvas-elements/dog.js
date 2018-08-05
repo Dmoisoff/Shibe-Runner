@@ -74,10 +74,6 @@ class Dog{
   }
 
   draw(_ctx){
-    // debugger
-    // _ctx.clearRect(0,0,800,500);
-    // debugger
-    // _ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
     const animate = [0,37.2,36.7,36.6,36.4];
     const animateCrop = [37.6,37.7,37.6,37,36];
     _ctx.drawImage(this.pexelDog, (this.index * animate[this.index]), 264, animateCrop[this.index],23.4, this.xPos, this.yPos, 95, 65);

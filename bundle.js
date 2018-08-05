@@ -185,10 +185,6 @@ var Dog = function () {
   }, {
     key: 'draw',
     value: function draw(_ctx) {
-      // debugger
-      // _ctx.clearRect(0,0,800,500);
-      // debugger
-      // _ctx.drawImage(this.pexelDog, this.index*36, 0, 37,24, this.xPos, this.yPos, 80, 55);
       var animate = [0, 37.2, 36.7, 36.6, 36.4];
       var animateCrop = [37.6, 37.7, 37.6, 37, 36];
       _ctx.drawImage(this.pexelDog, this.index * animate[this.index], 264, animateCrop[this.index], 23.4, this.xPos, this.yPos, 95, 65);
@@ -368,9 +364,7 @@ var Game = function () {
     value: function play(enemy, spirit) {
       var _this = this;
 
-      // debugger
       if (this.time === 1000) {
-        // debugger
         this.time = 0;
         this.enemySpeed += 3;
       }
@@ -391,14 +385,12 @@ var Game = function () {
         this.pauseGame(enemy, spirit);
       } else {
         if (!this.generatedTrees) {
-          // debugger
           this.treeGenerator();
           this.groundGenerator();
           this.leafGenerator();
           this.dog = new Dog(this.dogImage);
         }
         this._ctx.clearRect(0, 0, 900, 500);
-        // debugger
         this.leafDrawer();
         this.drawGround(this._ctx);
         this.drawTrees(this._ctx);
@@ -498,14 +490,12 @@ var Game = function () {
   }, {
     key: 'startGame',
     value: function startGame() {
-      debugger;
       this.currentScore = new Score(1, this.top);
       if (localStorage.topFive && this.localStorage) {
         this.top = localStorage.topFive.split(',');
         this.currentScore.postScore(this.top, this.localStorage);
       }
       this._ctx.clearRect(0, 0, 900, 500);
-      // debugger
       this.leafGenerator();
       this.groundGenerator();
       this.treeGenerator();
@@ -553,7 +543,6 @@ var Game = function () {
   }, {
     key: 'pauseGame',
     value: function pauseGame(enemy, spirit) {
-      // debugger
       this._ctx.clearRect(0, 0, 900, 500);
       this.leafDrawer();
       this.drawGround(this._ctx);
@@ -702,7 +691,6 @@ var Game = function () {
 }();
 
 function browserCheck() {
-  debugger;
   if ((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1) {
     return false;
   } else if (navigator.userAgent.indexOf("Chrome") != -1) {
@@ -807,14 +795,8 @@ var Ground = function () {
     value: function draw(ctx) {
       ctx.drawImage(this.groundImage, this.xPos, 395, 52, 110);
       this.xPos -= this.dx;
-
-      // this.subIndex += this.movementRate;
-      //   this.index = (this.index + 1) % 15;
-      //   this.subIndex = 0;
-
       this.count += 1;
       if (this.count === 1000) {
-        // debugger
         this.movementRate += 1;
         this.dx += this.movementRate / 2;
         this.count = 1;
@@ -968,7 +950,6 @@ var Score = function () {
   }, {
     key: "topFive",
     value: function topFive(newScore) {
-      debugger;
       var added = false;
       if (!this.top.length) {
         this.top = [newScore];
@@ -1242,7 +1223,6 @@ var Tree = function () {
 
       this.count += 1;
       if (this.count === 1000) {
-        // debugger
         this.movementRate += 1;
         this.dx += this.movementRate / 2;
         this.count = 1;

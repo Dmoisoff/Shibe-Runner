@@ -7,7 +7,7 @@ Help Shibe collect lost spirits while avoiding ghouls. An infinite runner browse
 * Dynamically generated ghouls, spirits, and their attributes which change based on player’s current scores.  
 
 
-**Tools used for The DOMController** (Languages, Frameworks, Libraries, Etc.)
+**Tools used for Shibe Runner** (Languages, Frameworks, Libraries, Etc.)
 * JavaScript
 
 
